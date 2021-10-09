@@ -1,0 +1,19 @@
+{
+  "name": "usapyon",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:semigura/usapyon.git",
+  "author": "semigura <shotaro-ishigaki@gaji.jp>",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack --mode=development",
+    "start": "webpack-dev-server --mode=development"
+  },
+  "devDependencies": {
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.4.3",
+    "webpack": "^5.58.1",
+    "webpack-cli": "^4.9.0",
+    "webpack-dev-server": "^4.3.1"
+  },
+}
