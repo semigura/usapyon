@@ -1,34 +1,33 @@
-const path = require('path');
+const path = require("path");
 module.exports = {
-    // モジュールバンドルを行う起点となるファイルの指定
-    // 指定できる値としては、ファイル名の文字列や、それを並べた配列やオブジェクト
-    // 下記はオブジェクトとして指定した例
-    entry: {
-        bundle: './src/app.ts'
+  // モード値を production に設定すると最適化された状態で、
+  // development に設定するとソースマップ有効でJSファイルが出力される
+  mode: "development",
+
+  // メインとなるJavaScriptファイル（エントリーポイント）
+  entry: "./src/app.ts",
+
+  module: {
+    rules: [
+      {
+        // 拡張子 .ts の場合
+        test: /\.ts$/,
+        // TypeScript をコンパイルする
+        use: "ts-loader",
+      },
+    ],
+  },
+  // import 文で .ts ファイルを解決するため
+  // これを定義しないと import 文で拡張子を書く必要が生まれる。
+  // フロントエンドの開発では拡張子を省略することが多いので、
+  // 記載したほうがトラブルに巻き込まれにくい。
+  resolve: {
+    // 拡張子を配列で指定
+    extensions: [".ts", ".js"],
+  },
+  devServer: {
+    static: {
+      directory: path.join(__dirname, "dist"),
     },
-    output: {
-        // モジュールバンドルを行った結果を出力する場所やファイル名の指定
-        // "__dirname"はこのファイルが存在するディレクトリを表すnode.jsで定義済みの定数
-        path: path.join(__dirname,'dist'),
-        filename: '[name].js'  // [name]はentryで記述した名前(この例ではbundle）が入る
-    },
-    // モジュールとして扱いたいファイルの拡張子を指定する
-    // 例えば「import Foo from './foo'」という記述に対して"foo.ts"という名前のファイルをモジュールとして探す
-    // デフォルトは['.js', '.json']
-    resolve: {
-        extensions:['.ts','.js']
-    },
-    devServer: {
-        // webpack-dev-serverの公開フォルダ
-        contentBase: path.join(__dirname,'dist')
-    },
-    // モジュールに適用するルールの設定（ここではローダーの設定を行う事が多い）
-    module: {
-        rules: [
-            {
-                // 拡張子が.tsで終わるファイルに対して、TypeScriptコンパイラを適用する
-                test:/\.ts$/,loader:'ts-loader'
-            }
-        ]
-    }
-}
+  },
+};
