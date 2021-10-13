@@ -1,3 +1,5 @@
+import { muteBGM, muteSE, sound, stopAll } from "./soundSettings";
+
 var usagi = 0;
 var kuma = 0;
 var risu = 0;
@@ -202,7 +204,7 @@ setInterval(function () {
 function achshow() {
   $("#info").html(infotext);
   $("#info").show();
-  soundis4.play();
+  sound.soundis4.play();
   setTimeout(function () {
     $("#info").fadeOut("slow");
     infotext = "";
@@ -210,50 +212,16 @@ function achshow() {
 }
 setInterval(achievement, 1000);
 
-let soundis1 = <HTMLAudioElement>document.getElementById("sound1");
-let soundis2 = <HTMLAudioElement>document.getElementById("sound2");
-let soundis3 = <HTMLAudioElement>document.getElementById("sound3");
-let soundis4 = <HTMLAudioElement>document.getElementById("sound4");
-let soundis5 = <HTMLAudioElement>document.getElementById("sound5");
-let soundis6 = <HTMLAudioElement>document.getElementById("sound6");
-let soundis7 = <HTMLAudioElement>document.getElementById("sound7");
-let soundis8 = <HTMLAudioElement>document.getElementById("sound8");
-
 //BGM流す
-soundis5.volume = 0.5;
-soundis8.volume = 0.5;
-soundis1.loop = true;
-soundis5.loop = true;
-soundis8.loop = true;
+sound.soundis5.volume = 0.5;
+sound.soundis8.volume = 0.5;
+sound.soundis1.loop = true;
+sound.soundis5.loop = true;
+sound.soundis8.loop = true;
 if (localStorage.usapri == 1) {
-  soundis8.play();
+  sound.soundis8.play();
 } else {
-  soundis5.play();
-}
-
-function muteSE() {
-  soundis2.volume = 0;
-  soundis4.volume = 0;
-  soundis6.volume = 0;
-  soundis7.volume = 0;
-}
-
-function muteBGM() {
-  soundis1.volume = 0;
-  soundis3.volume = 0;
-  soundis5.volume = 0;
-  soundis8.volume = 0;
-}
-
-function stopAll() {
-  soundis1.pause();
-  soundis2.pause();
-  soundis3.pause();
-  soundis4.pause();
-  soundis5.pause();
-  soundis6.pause();
-  soundis7.pause();
-  soundis8.pause();
+  sound.soundis5.play();
 }
 
 $("#mute_se").click(function () {
@@ -271,34 +239,34 @@ $("#not_carmen").click(function () {
 
 $("#play_ko").click(function () {
   if (localStorage.usapri == 1) {
-    soundis7.play();
+    sound.soundis7.play();
     alert("ダメです");
   } else {
     stopAll();
-    soundis5.currentTime = 0;
-    soundis5.play();
+    sound.soundis5.currentTime = 0;
+    sound.soundis5.play();
   }
 });
 
 $("#play_ca").click(function () {
   if (localStorage.usapri == 1) {
-    soundis7.play();
+    sound.soundis7.play();
     alert("ダメです");
   } else {
     stopAll();
-    soundis1.currentTime = 0;
-    soundis1.play();
+    sound.soundis1.currentTime = 0;
+    sound.soundis1.play();
   }
 });
 
 $("#play_hi").click(function () {
   if (localStorage.usapriTimes == 0) {
-    soundis7.play();
+    sound.soundis7.play();
     alert("聴いたことがないのでダメです");
   } else {
     stopAll();
-    soundis8.currentTime = 0;
-    soundis8.play();
+    sound.soundis8.currentTime = 0;
+    sound.soundis8.play();
   }
 });
 
@@ -396,8 +364,8 @@ function usafuya() {
       var ran = Math.floor(Math.random() * 21);
       switch (ran) {
         case 0:
-          soundis6.currentTime = 0;
-          soundis6.play();
+          sound.soundis6.currentTime = 0;
+          sound.soundis6.play();
           usasrc = "image/aja.png";
           aja++;
           break;
@@ -437,15 +405,15 @@ setInterval(function () {
   //うさぎが10000匹を超えた場合ジュピターを流してスタッフロールを表示
   if (usagi >= 10000 * no) {
     stopAll();
-    soundis3.play();
-    var b = document.createElement("img");
-    b.setAttribute("src", "image/staff.png");
-    b.setAttribute("id", "staff");
-    b.setAttribute(
+    sound.soundis3.play();
+    const creimg = document.createElement("img");
+    creimg.setAttribute("src", "image/staff.png");
+    creimg.setAttribute("id", "staff");
+    creimg.setAttribute(
       "style",
       "text-align:center; position:fixed; bottom:0px; left:200px;z-index:9999;opacity:0.9; max-width:50%;margin:0 auto;"
     );
-    document.body.appendChild(b);
+    document.body.appendChild(creimg);
     $("#staff").animate(
       {
         top: "50px",
@@ -458,8 +426,8 @@ setInterval(function () {
   } else if (usagi >= 1000 * n) {
     if (notCarmen != 1) {
       stopAll();
-      soundis1.currentTime = 0;
-      soundis1.play();
+      sound.soundis1.currentTime = 0;
+      sound.soundis1.play();
     }
     var creimg = document.createElement("img");
     creimg.setAttribute("src", "image/tairyou.png");
