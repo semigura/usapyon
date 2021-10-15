@@ -1,15 +1,18 @@
 import { muteBGM, muteSE, sound, stopAll } from "./soundSettings";
 
-var usagi = 0;
-var kuma = 0;
-var risu = 0;
-var aja = 0;
-var tori = 0;
-var tairyou = 0;
-var notCarmen = 0;
-var n = 1;
-var no = 1;
-var creimg;
+let usagi = 0;
+let kuma = 0;
+let risu = 0;
+let aja = 0;
+let tori = 0;
+let tairyou = 0;
+let notCarmen = 0;
+let n = 1;
+let no = 1;
+let creimg;
+let playTime: number;
+let totalTairyou: number;
+let infotext: string;
 const usaran = [
   "image/usa (1).png",
   "image/usa (2).png",
@@ -22,11 +25,14 @@ const usaran = [
 let u;
 let usasrc;
 let totalTori: number;
-
+let totalUsagi = 0;
+let totalKuma = 0;
+let totalRisu = 0;
+let totalAja = 0;
 //データ読み込み
-let launchTimes: number = Number(localStorage.getItem("launchTimes"));
+let launchTimes = Number(localStorage.getItem("launchTimes"));
 
-var launchTime = Math.floor(Date.now() / 1000);
+const launchTime = Math.floor(Date.now() / 1000);
 
 ////初回プレイの場合
 if (!localStorage.getItem("launchTimes")) {
@@ -37,13 +43,13 @@ if (!localStorage.getItem("launchTimes")) {
   localStorage.setItem("totalRisu", "0");
   localStorage.setItem("totalAja", "0");
   localStorage.setItem("totalTori", "0");
-  var totalUsagi = 0;
-  var totalKuma = 0;
-  var totalRisu = 0;
-  var totalAja = 0;
+  totalUsagi = 0;
+  totalKuma = 0;
+  totalRisu = 0;
+  totalAja = 0;
   totalTori = 0;
   launchTimes = 1;
-  var infotext = "初回プレイです";
+  infotext = "初回プレイです";
   $(document).ready(function () {
     $("#info").html(infotext);
     setTimeout(function () {
@@ -53,32 +59,44 @@ if (!localStorage.getItem("launchTimes")) {
   });
 } else {
   ////二回目以降の場合
-  var totalUsagi = Number(localStorage.getItem("totalUsagi"));
-  var totalKuma = Number(localStorage.getItem("totalKuma"));
-  var totalRisu = Number(localStorage.getItem("totalRisu"));
-  var totalAja = Number(localStorage.getItem("totalAja"));
+  totalUsagi = Number(localStorage.getItem("totalUsagi"));
+  totalKuma = Number(localStorage.getItem("totalKuma"));
+  totalRisu = Number(localStorage.getItem("totalRisu"));
+  totalAja = Number(localStorage.getItem("totalAja"));
   totalTori = Number(localStorage.getItem("totalTori"));
-  var totalTairyou = Number(localStorage.getItem("totalTairyou"));
+  totalTairyou = Number(localStorage.getItem("totalTairyou"));
   if (localStorage.usapri != 1) {
     launchTimes++;
     localStorage.setItem("launchTimes", launchTimes.toString());
-    var infotext = launchTimes + "回目のプレイです";
+    infotext = launchTimes + "回目のプレイです";
   } else {
-    var infotext = "あなたはうさプリに入れられました";
+    infotext = "あなたはうさプリに入れられました";
   }
   infotext =
-    infotext + "<br>\n今まで累計" + totalUsagi + "匹のうさぎを増やしました";
+    infotext +
+    "<br>\n今まで累計" +
+    Number(localStorage.getItem("totalUsagi")) +
+    "匹のうさぎを増やしました";
   if (totalKuma >= 1) {
     infotext =
-      infotext + "<br>\n今まで累計" + totalKuma + "匹のくまを見つけました";
+      infotext +
+      "<br>\n今まで累計" +
+      Number(localStorage.getItem("totalKuma")) +
+      "匹のくまを見つけました";
   }
   if (totalRisu >= 1) {
     infotext =
-      infotext + "<br>\n今まで累計" + totalRisu + "匹のりすを見つけました";
+      infotext +
+      "<br>\n今まで累計" +
+      Number(localStorage.getItem("totalRisu")) +
+      "匹のりすを見つけました";
   }
   if (totalAja >= 1) {
     infotext =
-      infotext + "<br>\n今まで累計" + totalAja + "匹のあじゃを見つけました";
+      infotext +
+      "<br>\n今まで累計" +
+      Number(localStorage.getItem("totalAja")) +
+      "匹のあじゃを見つけました";
   }
   $(document).ready(function () {
     $("#info").html(infotext);
@@ -90,32 +108,31 @@ if (!localStorage.getItem("launchTimes")) {
 }
 if (typeof localStorage.totalTairyou === "undefined") {
   localStorage.totalTairyou = 0;
-  var totalTairyou = Number(localStorage.totalTairyou);
+  totalTairyou = Number(localStorage.totalTairyou);
 }
 if (typeof localStorage.usapriTimes === "undefined") {
   localStorage.usapriTimes = 0;
 }
 if (typeof localStorage.playTime === "undefined") {
   localStorage.playTime = 0;
-  var playTime = Number(localStorage.playTime);
+  playTime = Number(localStorage.playTime);
 } else {
-  var playTime = Number(localStorage.playTime);
+  playTime = Number(localStorage.playTime);
 }
 
 //データ保存
 $(window).on("pagehide", function () {
-  var totalUsagi = Number(localStorage.getItem("totalUsagi"));
-  var totalKuma = Number(localStorage.getItem("totalKuma"));
-  var totalRisu = Number(localStorage.getItem("totalRisu"));
-  var totalAja = Number(localStorage.getItem("totalAja"));
-  var totalTairyou = Number(localStorage.getItem("totalTairyou"));
+  let totalUsagi = Number(localStorage.getItem("totalUsagi"));
+  let totalKuma = Number(localStorage.getItem("totalKuma"));
+  let totalRisu = Number(localStorage.getItem("totalRisu"));
+  let totalAja = Number(localStorage.getItem("totalAja"));
+  let totalTairyou = Number(localStorage.getItem("totalTairyou"));
   totalUsagi = totalUsagi + usagi;
   totalKuma = totalKuma + kuma;
   totalRisu = totalRisu + risu;
   totalAja = totalAja + aja;
   totalTairyou = totalTairyou + tairyou;
-  var nowTime = Math.floor(Date.now() / 1000);
-  playTime = playTime + nowTime - launchTime;
+  playTime = playTime + Math.floor(Date.now() / 1000) - launchTime;
   localStorage.setItem("totalUsagi", totalUsagi.toString());
   localStorage.setItem("totalKuma", totalKuma.toString());
   localStorage.setItem("totalRisu", totalRisu.toString());
@@ -125,48 +142,20 @@ $(window).on("pagehide", function () {
 });
 
 setInterval(function () {
-  var nowTime = Math.floor(Date.now() / 1000);
-  var showlaunchtime = "累計プレイ回数 : " + launchTimes + "回<br>\n";
-  var showPlayTime =
-    "累計プレイ時間 : " + (playTime + nowTime - launchTime) + "秒<br>\n";
-  var usagiRuikei = "累計うさぎ増やし数 : " + (totalUsagi + usagi) + "匹<br>\n";
-  var kumaRuikei = "累計くま発見数 : " + (totalKuma + kuma) + "匹<br>\n";
-  var risuRuikei = "累計りす発見数 : " + (totalRisu + risu) + "匹<br>\n";
-  var ajaRuikei = "累計あじゃ発見数 : " + (totalAja + aja) + "匹<br>\n";
-  if (totalTori + tori >= 1) {
-    var toriRuikei = "累計鳥になった回数 : " + (totalTori + tori) + "回<br>\n";
-  } else {
-    var toriRuikei = "";
-  }
-  if (Number(localStorage.usapriTimes) >= 1) {
-    var priRuikei =
-      "累計うさプリ収監回数 : " + localStorage.usapriTimes + "回<br>\n";
-  } else {
-    var priRuikei = "";
-  }
-  if (totalTairyou + tairyou >= 1) {
-    var tairyouRuikei =
-      "累計大漁回数 : " + (totalTairyou + tairyou) + "回<br>\n";
-  } else {
-    var tairyouRuikei = "";
-  }
-  var usagiHeikin =
-    "1プレイでの平均うさぎ増やし数 : " +
-    Math.round(((totalUsagi + usagi) / launchTimes) * 10) / 10 +
-    "匹<br>\n";
-  var kumaHeikin =
-    "1プレイでの平均くま発見数 : " +
-    Math.round(((totalKuma + kuma) / launchTimes) * 10) / 10 +
-    "匹<br>\n";
-  var risuHeikin =
-    "1プレイでの平均りす発見数 : " +
-    Math.round(((totalRisu + risu) / launchTimes) * 10) / 10 +
-    "匹<br>\n";
-  var ajaHeikin =
-    "1プレイでの平均あじゃ発見数 : " +
-    Math.round(((totalAja + aja) / launchTimes) * 10) / 10 +
-    "匹<br>\n";
-  var score = Math.round(((totalUsagi + usagi) / launchTimes) * 10) / 10;
+  const nowTime = Math.floor(Date.now() / 1000);
+  const toriRuikei =
+    totalTori + tori >= 1
+      ? "累計鳥になった回数 : " + (totalTori + tori) + "回<br>\n"
+      : "";
+  const priRuikei =
+    Number(localStorage.usapriTimes) >= 1
+      ? "累計うさプリ収監回数 : " + localStorage.usapriTimes + "回<br>\n"
+      : "";
+  const tairyouRuikei =
+    totalTairyou + tairyou >= 1
+      ? "累計大漁回数 : " + (totalTairyou + tairyou) + "回<br>\n"
+      : "";
+  let score = Math.round(((totalUsagi + usagi) / launchTimes) * 10) / 10;
   score =
     score + (Math.round(((totalKuma + kuma) / launchTimes) * 10) / 10) * 100;
   score =
@@ -180,21 +169,41 @@ setInterval(function () {
   score =
     (score * (Math.round((playTime + nowTime - launchTime) / 60) + 10)) / 10;
   score = Math.round(score);
-  var showScore = "スコア : " + score + "点<br>\n";
+  const showScore = "スコア : " + score + "点<br>\n";
   $("#status").html(
-    showlaunchtime +
-      showPlayTime +
-      usagiRuikei +
-      kumaRuikei +
-      risuRuikei +
-      ajaRuikei +
+    "累計プレイ回数 : " +
+      launchTimes +
+      "回<br>\n" +
+      "累計プレイ時間 : " +
+      (playTime + nowTime - launchTime) +
+      "秒<br>\n" +
+      "累計うさぎ増やし数 : " +
+      (totalUsagi + usagi) +
+      "匹<br>\n" +
+      "累計くま発見数 : " +
+      (totalKuma + kuma) +
+      "匹<br>\n" +
+      "累計りす発見数 : " +
+      (totalRisu + risu) +
+      "匹<br>\n" +
+      "累計あじゃ発見数 : " +
+      (totalAja + aja) +
+      "匹<br>\n" +
       toriRuikei +
       priRuikei +
       tairyouRuikei +
-      usagiHeikin +
-      kumaHeikin +
-      risuHeikin +
-      ajaHeikin +
+      "1プレイでの平均うさぎ増やし数 : " +
+      Math.round(((totalUsagi + usagi) / launchTimes) * 10) / 10 +
+      "匹<br>\n" +
+      "1プレイでの平均くま発見数 : " +
+      Math.round(((totalKuma + kuma) / launchTimes) * 10) / 10 +
+      "匹<br>\n" +
+      "1プレイでの平均りす発見数 : " +
+      Math.round(((totalRisu + risu) / launchTimes) * 10) / 10 +
+      "匹<br>\n" +
+      "1プレイでの平均あじゃ発見数 : " +
+      Math.round(((totalAja + aja) / launchTimes) * 10) / 10 +
+      "匹<br>\n" +
       showScore
   );
 }, 1000);
@@ -232,7 +241,7 @@ $("#mute_bgm").click(function () {
 });
 
 $("#not_carmen").click(function () {
-  var notCarmen = 1;
+  notCarmen = 1;
   console.log(notCarmen);
 });
 
@@ -273,7 +282,7 @@ $("#del").click(function () {
   if (localStorage.usapri == 1) {
     alert("消せません");
   } else {
-    var del = confirm("全てのデータを初期化します。よろしいですか？");
+    const del = confirm("全てのデータを初期化します。よろしいですか？");
     if (del) {
       localStorage.clear();
       clearInterval(setInterval(achievement, 10));
@@ -300,16 +309,7 @@ $(window).keydown(function () {
 if (localStorage.usapri == 1) {
   window.location.href = "usapri.html";
 }
-var firstLaunchTime = Date.now();
-/*
-  if (typeof localStorage.first_launch_time === "undefined"){
-  firstLaunchTime = Math.floor(firstLaunchTime/1000);
-  localStorage.first_launch_time = firstLaunchTime;
-  console.log(localStorage.first_launch_time);
-  } else {
-      var firstLaunchTime = localStorage.first_launch_time;
-  }
-  */
+
 if (localStorage.getItem("mute") === "1") {
   sound.soundis1.volume = 0;
   sound.soundis2.volume = 0;
@@ -326,13 +326,13 @@ $("#tori").click(function () {
   if (typeof localStorage.totalTori === "undefined") {
     localStorage.setItem("totalTori", "1");
   } else {
-    var totalTori = Number(localStorage.getItem("totalTori"));
+    let totalTori = Number(localStorage.getItem("totalTori"));
     totalTori++;
     localStorage.setItem("totalTori", totalTori.toString());
   }
   tori++;
   if (tori >= 5) {
-    var usapriTimes = Number(localStorage.getItem("usapriTimes"));
+    let usapriTimes = Number(localStorage.getItem("usapriTimes"));
     usapriTimes++;
     localStorage.setItem("usapriTimes", usapriTimes.toString());
     alert("鳥になりすぎです");
@@ -345,12 +345,11 @@ $("#tori").click(function () {
 function usafuya() {
   sound.soundis2.currentTime = 0;
   sound.soundis2.play();
-  var sW2 = window.innerWidth + 60;
-  var sH2 = window.innerHeight + 100;
-  var sW = Math.floor(Math.random() * sW2) - 30;
-  var sH = Math.floor(Math.random() * sH2) - 50;
-  var ran = Math.floor(Math.random() * 101);
-  switch (ran) {
+  const sW = Math.floor(Math.random() * window.innerWidth + 60) - 30;
+  const sH = Math.floor(Math.random() * window.innerHeight + 100) - 50;
+  const random20 = Math.floor(Math.random() * 21);
+  const random100 = Math.floor(Math.random() * 101);
+  switch (random100) {
     case 0:
       usasrc = "image/risu.png";
       risu++;
@@ -360,8 +359,7 @@ function usafuya() {
       kuma++;
       break;
     case 2:
-      var ran = Math.floor(Math.random() * 21);
-      switch (ran) {
+      switch (random20) {
         case 0:
           sound.soundis6.currentTime = 0;
           sound.soundis6.play();
@@ -424,13 +422,13 @@ setInterval(function () {
     no++;
     n++;
     //うさぎが1000匹を超える毎に大漁を表示しカルメン組曲を再生
-  } else if (usagi >= 1000 * n) {
+  } else if (usagi >= 2 * n) {
     if (notCarmen != 1) {
       stopAll();
       sound.soundis1.currentTime = 0;
       sound.soundis1.play();
     }
-    var creimg = document.createElement("img");
+    const creimg = document.createElement("img");
     creimg.setAttribute("src", "image/tairyou.png");
     creimg.setAttribute("style", "position:fixed; bottom:10px; right:10px;");
     document.body.appendChild(creimg);
