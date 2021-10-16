@@ -50,8 +50,11 @@ if (!localStorage.getItem("launchTimes")) {
   totalTori = 0;
   launchTimes = 1;
   infotext = "初回プレイです";
-  $(document).ready(function () {
-    $("#info").html(infotext);
+  document.addEventListener("DOMContentLoaded", function () {
+    const info = document.getElementById("info");
+    if (info !== null) {
+      info.innerHTML = infotext;
+    }
     setTimeout(function () {
       $("#info").fadeOut("slow");
       infotext = "";
@@ -98,8 +101,11 @@ if (!localStorage.getItem("launchTimes")) {
       Number(localStorage.getItem("totalAja")) +
       "匹のあじゃを見つけました";
   }
-  $(document).ready(function () {
-    $("#info").html(infotext);
+  document.addEventListener("DOMContentLoaded", function () {
+    const info = document.getElementById("info");
+    if (info !== null) {
+      info.innerHTML = infotext;
+    }
     setTimeout(function () {
       $("#info").fadeOut("slow");
       infotext = "";
@@ -121,7 +127,7 @@ if (typeof localStorage.playTime === "undefined") {
 }
 
 //データ保存
-$(window).on("pagehide", function () {
+window.addEventListener("pagehide", function () {
   let totalUsagi = Number(localStorage.getItem("totalUsagi"));
   let totalKuma = Number(localStorage.getItem("totalKuma"));
   let totalRisu = Number(localStorage.getItem("totalRisu"));
@@ -170,8 +176,10 @@ setInterval(function () {
     (score * (Math.round((playTime + nowTime - launchTime) / 60) + 10)) / 10;
   score = Math.round(score);
   const showScore = "スコア : " + score + "点<br>\n";
-  $("#status").html(
-    "累計プレイ回数 : " +
+  const status = document.getElementById("status");
+  if (status !== null) {
+    status.innerHTML =
+      "累計プレイ回数 : " +
       launchTimes +
       "回<br>\n" +
       "累計プレイ時間 : " +
@@ -204,13 +212,16 @@ setInterval(function () {
       "1プレイでの平均あじゃ発見数 : " +
       Math.round(((totalAja + aja) / launchTimes) * 10) / 10 +
       "匹<br>\n" +
-      showScore
-  );
+      showScore;
+  }
 }, 1000);
 
 //実績表示
 function achshow() {
-  $("#info").html(infotext);
+  const info = document.getElementById("info");
+  if (info !== null) {
+    info.innerHTML = infotext;
+  }
   $("#info").show();
   sound.soundis4.play();
   setTimeout(function () {
@@ -232,20 +243,20 @@ if (localStorage.usapri == 1) {
   sound.soundis5.play();
 }
 
-$("#mute_se").click(function () {
+document.getElementById("mute_se")?.addEventListener("click", function () {
   muteSE();
 });
 
-$("#mute_bgm").click(function () {
+document.getElementById("mute_bgm")?.addEventListener("click", function () {
   muteBGM();
 });
 
-$("#not_carmen").click(function () {
+document.getElementById("not_carmen")?.addEventListener("click", function () {
   notCarmen = 1;
   console.log(notCarmen);
 });
 
-$("#play_ko").click(function () {
+document.getElementById("play_ko")?.addEventListener("click", function () {
   if (localStorage.usapri == 1) {
     sound.soundis7.play();
     alert("ダメです");
@@ -256,7 +267,7 @@ $("#play_ko").click(function () {
   }
 });
 
-$("#play_ca").click(function () {
+document.getElementById("play_ca")?.addEventListener("click", function () {
   if (localStorage.usapri == 1) {
     sound.soundis7.play();
     alert("ダメです");
@@ -267,7 +278,7 @@ $("#play_ca").click(function () {
   }
 });
 
-$("#play_hi").click(function () {
+document.getElementById("play_hi")?.addEventListener("click", function () {
   if (localStorage.usapriTimes == 0) {
     sound.soundis7.play();
     alert("聴いたことがないのでダメです");
@@ -278,7 +289,7 @@ $("#play_hi").click(function () {
   }
 });
 
-$("#del").click(function () {
+document.getElementById("del")?.addEventListener("click", function () {
   if (localStorage.usapri == 1) {
     alert("消せません");
   } else {
@@ -291,17 +302,18 @@ $("#del").click(function () {
   }
 });
 
-$("#version").html("ver.1.1.1β");
+const version = document.getElementById("version");
+if (version !== null) {
+  version.innerHTML = "ver.1.1.1β";
+}
 
-$("#version").click(function () {
+document.getElementById("version")?.addEventListener("click", function () {
   $("#credit").fadeToggle();
 });
 
-$("#1").click(function () {
-  usafuya();
-});
+document.getElementById("1")?.addEventListener("click", usafuya);
 
-$(window).keydown(function () {
+window.addEventListener("keydown", function () {
   return false;
 });
 
@@ -320,7 +332,8 @@ if (localStorage.getItem("mute") === "1") {
   sound.soundis7.volume = 0;
   sound.soundis8.volume = 0;
 }
-$("#tori").click(function () {
+
+document.getElementById("tori")?.addEventListener("click", function () {
   sound.soundis7.play();
   alert("できません");
   if (typeof localStorage.totalTori === "undefined") {
@@ -400,7 +413,11 @@ setInterval(function () {
     u = u + "<br>\n" + aja + "匹のあじゃがいます";
   }
   u + '"';
-  $("#usa").html(u);
+
+  const usa = document.getElementById("usa");
+  if (usa !== null) {
+    usa.innerHTML = u;
+  }
   //うさぎが10000匹を超えた場合ジュピターを流してスタッフロールを表示
   if (usagi >= 10000 * no) {
     stopAll();
@@ -1282,5 +1299,8 @@ function achievement() {
   }
   console.log(totalAchievement);
   localStorage.totalAchievement = totalAchievement;
-  $("#achievement_list").html(achievementList);
+  const achievementListElement = document.getElementById("achievement_list");
+  if (achievementListElement !== null) {
+    achievementListElement.innerHTML = achievementList;
+  }
 }
