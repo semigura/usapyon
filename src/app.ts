@@ -7,9 +7,8 @@ let aja = 0;
 let tori = 0;
 let tairyou = 0;
 let notCarmen = 0;
-let n = 1;
-let no = 1;
-let creimg;
+let tairyouCount = 1;
+let staffRollCount = 1;
 let playTime: number;
 let totalTairyou: number;
 let infotext: string;
@@ -22,7 +21,6 @@ const usaran = [
   "image/usa (6).png",
   "image/usa (7).png",
 ];
-let u;
 let usasrc;
 let totalTori: number;
 let totalUsagi = 0;
@@ -390,19 +388,19 @@ function usafuya() {
       usagi++;
       break;
   }
-  creimg = document.createElement("img");
-  creimg.setAttribute("src", usasrc);
-  creimg.setAttribute(
+  const createImg = document.createElement("img");
+  createImg.setAttribute("src", usasrc);
+  createImg.setAttribute(
     "style",
     "position:fixed; top:" + sH + "px; left:" + sW + "px;"
   );
-  document.body.appendChild(creimg);
+  document.body.appendChild(createImg);
 }
 //0.1秒毎に状態チェック
 
 let redrawCount = 1;
 setInterval(function () {
-  u = usagi + "匹のうさぎがいます";
+  let u = usagi + "匹のうさぎがいます";
   if (kuma >= 1) {
     u = u + "<br>\n" + kuma + "匹のくまがいます";
   }
@@ -419,7 +417,7 @@ setInterval(function () {
     usa.innerHTML = u;
   }
   //うさぎが10000匹を超えた場合ジュピターを流してスタッフロールを表示
-  if (usagi >= 10000 * no) {
+  if (usagi >= 10000 * staffRollCount) {
     stopAll();
     sound.soundis3.play();
     const creimg = document.createElement("img");
@@ -436,10 +434,10 @@ setInterval(function () {
       },
       400
     );
-    no++;
-    n++;
+    staffRollCount++;
+    tairyouCount++;
     //うさぎが1000匹を超える毎に大漁を表示しカルメン組曲を再生
-  } else if (usagi >= 2 * n) {
+  } else if (usagi >= 2 * tairyouCount) {
     if (notCarmen != 1) {
       stopAll();
       sound.soundis1.currentTime = 0;
@@ -449,7 +447,7 @@ setInterval(function () {
     creimg.setAttribute("src", "image/tairyou.png");
     creimg.setAttribute("style", "position:fixed; bottom:10px; right:10px;");
     document.body.appendChild(creimg);
-    n++;
+    tairyouCount++;
     tairyou++;
   }
   redrawButton();
