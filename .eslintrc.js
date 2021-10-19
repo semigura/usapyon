@@ -1,11 +1,25 @@
 module.exports = {
   root: true,
-  parser: '@typescript-eslint/parser',
-  plugins: [
-    '@typescript-eslint',
-  ],
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    tsconfigRootDir: ".",
+    sourceType: "module",
+  },
+  env: {
+    es6: true,
+    browser: true,
+    node: true,
+  },
+  plugins: ["@typescript-eslint"],
   extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
+    "airbnb",
+    "airbnb/hooks",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
   ],
+  ignorePatterns: ["node_modules/"],
+  settings: {
+    "import/resolver": "webpack",
+  },
 };
