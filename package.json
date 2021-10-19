@@ -3,14 +3,25 @@
   "version": "1.0.0",
   "main": "index.js",
   "repository": "git@github.com:semigura/usapyon.git",
-  "author": "semigura <shotaro-ishigaki@gaji.jp>",
+  "author": "semigura",
   "license": "MIT",
   "scripts": {
-    "build": "webpack --mode=development",
-    "start": "webpack-dev-server --mode=development"
+    "dev": "webpack-dev-server --mode=development",
+    "lint": "eslint ."
   },
   "devDependencies": {
     "@types/jquery": "^3.5.6",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
+    "eslint": "^8.0.1",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-webpack": "^0.13.1",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.26.1",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "prettier": "^2.4.1",
     "stylelint": "^13.13.1",
     "stylelint-config-property-sort-order-smacss": "^7.1.0",
