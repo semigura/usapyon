@@ -1,6 +1,5 @@
-/* eslint-disable no-restricted-globals */
 // eslint-disable-next-line import/extensions
-import { muteBGM, muteSE, sound, stopAll } from "./soundSettings";
+import { muteBGM, muteSE, play, sound } from "./soundSettings";
 
 let usagi = 0;
 let kuma = 0;
@@ -34,6 +33,19 @@ let launchTimes = Number(localStorage.getItem("launchTimes"));
 
 const launchTime = Math.floor(Date.now() / 1000);
 
+function fadeOutInfo() {
+  $("#info").fadeOut("slow");
+  infotext = "";
+}
+
+function showInfo() {
+  const info = document.getElementById("info");
+  if (info !== null) {
+    info.innerHTML = infotext;
+  }
+  setTimeout(fadeOutInfo, 5000);
+}
+
 /// /初回プレイの場合
 if (!localStorage.getItem("launchTimes")) {
   localStorage.clear();
@@ -50,16 +62,7 @@ if (!localStorage.getItem("launchTimes")) {
   totalTori = 0;
   launchTimes = 1;
   infotext = "初回プレイです";
-  document.addEventListener("DOMContentLoaded", function () {
-    const info = document.getElementById("info");
-    if (info !== null) {
-      info.innerHTML = infotext;
-    }
-    setTimeout(function () {
-      $("#info").fadeOut("slow");
-      infotext = "";
-    }, 5000);
-  });
+  document.addEventListener("DOMContentLoaded", showInfo);
 } else {
   /// /二回目以降の場合
   totalUsagi = Number(localStorage.getItem("totalUsagi"));
@@ -93,16 +96,7 @@ if (!localStorage.getItem("launchTimes")) {
       localStorage.getItem("totalAja")
     )}匹のあじゃを見つけました`;
   }
-  document.addEventListener("DOMContentLoaded", function () {
-    const info = document.getElementById("info");
-    if (info !== null) {
-      info.innerHTML = infotext;
-    }
-    setTimeout(function () {
-      $("#info").fadeOut("slow");
-      infotext = "";
-    }, 5000);
-  });
+  document.addEventListener("DOMContentLoaded", showInfo);
 }
 if (typeof localStorage.totalTairyou === "undefined") {
   localStorage.totalTairyou = 0;
@@ -118,8 +112,7 @@ if (typeof localStorage.playTime === "undefined") {
   playTime = Number(localStorage.playTime);
 }
 
-// データ保存
-window.addEventListener("pagehide", function () {
+function dataSave() {
   let totalUsagin = Number(localStorage.getItem("totalUsagi"));
   let totalKuman = Number(localStorage.getItem("totalKuma"));
   let totalRisun = Number(localStorage.getItem("totalRisu"));
@@ -137,22 +130,13 @@ window.addEventListener("pagehide", function () {
   localStorage.setItem("totalAja", totalAjan.toString());
   localStorage.totalTairyou = totalTairyoun;
   localStorage.playTime = playTime;
-});
+}
 
-setInterval(function () {
+// データ保存
+window.addEventListener("pagehide", dataSave);
+
+function displayScore() {
   const nowTime = Math.floor(Date.now() / 1000);
-  const toriRuikei =
-    totalTori + tori >= 1
-      ? `累計鳥になった回数 : ${totalTori + tori}回<br>\n`
-      : "";
-  const priRuikei =
-    Number(localStorage.usapriTimes) >= 1
-      ? `累計うさプリ収監回数 : ${localStorage.usapriTimes}回<br>\n`
-      : "";
-  const tairyouRuikei =
-    totalTairyou + tairyou >= 1
-      ? `累計大漁回数 : ${totalTairyou + tairyou}回<br>\n`
-      : "";
   let score = Math.round(((totalUsagi + usagi) / launchTimes) * 10) / 10;
   score += (Math.round(((totalKuma + kuma) / launchTimes) * 10) / 10) * 100;
   score += (Math.round(((totalRisu + risu) / launchTimes) * 10) / 10) * 100;
@@ -164,7 +148,6 @@ setInterval(function () {
   score =
     (score * (Math.round((playTime + nowTime - launchTime) / 60) + 10)) / 10;
   score = Math.round(score);
-  const showScore = `スコア : ${score}点<br>\n`;
   const status = document.getElementById("status");
   if (status !== null) {
     status.innerHTML =
@@ -173,9 +156,19 @@ setInterval(function () {
       `累計うさぎ増やし数 : ${totalUsagi + usagi}匹<br>\n` +
       `累計くま発見数 : ${totalKuma + kuma}匹<br>\n` +
       `累計りす発見数 : ${totalRisu + risu}匹<br>\n` +
-      `累計あじゃ発見数 : ${
-        totalAja + aja
-      }匹<br>\n${toriRuikei}${priRuikei}${tairyouRuikei}1プレイでの平均うさぎ増やし数 : ${
+      `累計あじゃ発見数 : ${totalAja + aja}匹<br>\n${
+        totalTori + tori >= 1
+          ? `累計鳥になった回数 : ${totalTori + tori}回<br>\n`
+          : ""
+      }${
+        Number(localStorage.usapriTimes) >= 1
+          ? `累計うさプリ収監回数 : ${localStorage.usapriTimes}回<br>\n`
+          : ""
+      }${
+        totalTairyou + tairyou >= 1
+          ? `累計大漁回数 : ${totalTairyou + tairyou}回<br>\n`
+          : ""
+      }1プレイでの平均うさぎ増やし数 : ${
         Math.round(((totalUsagi + usagi) / launchTimes) * 10) / 10
       }匹<br>\n` +
       `1プレイでの平均くま発見数 : ${
@@ -186,9 +179,9 @@ setInterval(function () {
       }匹<br>\n` +
       `1プレイでの平均あじゃ発見数 : ${
         Math.round(((totalAja + aja) / launchTimes) * 10) / 10
-      }匹<br>\n${showScore}`;
+      }匹<br>\nスコア : ${score}点<br>\n`;
   }
-}, 1000);
+}
 
 // 実績表示
 function achshow() {
@@ -198,10 +191,7 @@ function achshow() {
   }
   $("#info").show();
   sound.soundis4.play();
-  setTimeout(function () {
-    $("#info").fadeOut("slow");
-    infotext = "";
-  }, 5000);
+  setTimeout(fadeOutInfo, 5000);
 }
 
 // BGM流す
@@ -216,63 +206,51 @@ if (localStorage.usapri === 1) {
   sound.soundis5.play();
 }
 
-document.getElementById("mute_se")?.addEventListener("click", function () {
-  muteSE();
-});
-
-document.getElementById("mute_bgm")?.addEventListener("click", function () {
-  muteBGM();
-});
-
-document.getElementById("not_carmen")?.addEventListener("click", function () {
+function setNotCarmen() {
   notCarmen = 1;
-});
+}
 
-document.getElementById("play_ko")?.addEventListener("click", function () {
+function playKo() {
   if (localStorage.usapri === 1) {
     sound.soundis7.play();
     alert("ダメです");
   } else {
-    stopAll();
-    sound.soundis5.currentTime = 0;
-    sound.soundis5.play();
+    play(sound.soundis5);
   }
-});
+}
 
-document.getElementById("play_ca")?.addEventListener("click", function () {
+function playCa() {
   if (localStorage.usapri === 1) {
     sound.soundis7.play();
     alert("ダメです");
   } else {
-    stopAll();
-    sound.soundis1.currentTime = 0;
-    sound.soundis1.play();
+    play(sound.soundis1);
   }
-});
+}
 
-document.getElementById("play_hi")?.addEventListener("click", function () {
+function playHi() {
   if (localStorage.usapriTimes === 0) {
     sound.soundis7.play();
     alert("聴いたことがないのでダメです");
   } else {
-    stopAll();
-    sound.soundis8.currentTime = 0;
-    sound.soundis8.play();
+    play(sound.soundis8);
   }
-});
+}
 
 const version = document.getElementById("version");
 if (version !== null) {
   version.innerHTML = "ver.1.1.1β";
 }
 
-document.getElementById("version")?.addEventListener("click", function () {
+function showCredit() {
   $("#credit").fadeToggle();
-});
+}
 
-window.addEventListener("keydown", function () {
+function returnFalse() {
   return false;
-});
+}
+
+window.addEventListener("keydown", returnFalse);
 
 // 初期化
 if (localStorage.usapri === 1) {
@@ -290,7 +268,7 @@ if (localStorage.getItem("mute") === "1") {
   sound.soundis8.volume = 0;
 }
 
-document.getElementById("tori")?.addEventListener("click", function () {
+function clickTori() {
   sound.soundis7.play();
   alert("できません");
   if (typeof localStorage.totalTori === "undefined") {
@@ -309,7 +287,7 @@ document.getElementById("tori")?.addEventListener("click", function () {
     window.location.href = "usapri.html";
     localStorage.setItem("usapri", "1");
   }
-});
+}
 
 // ボタンクリック
 function usafuya() {
@@ -379,7 +357,7 @@ function redrawButton() {
   }
 }
 
-setInterval(function () {
+function showStatus() {
   let u = `${usagi}匹のうさぎがいます`;
   if (kuma >= 1) {
     u = `${u}<br>\n${kuma}匹のくまがいます`;
@@ -390,7 +368,6 @@ setInterval(function () {
   if (aja >= 1) {
     u = `${u}<br>\n${aja}匹のあじゃがいます`;
   }
-  u = `${u}"`;
 
   const usa = document.getElementById("usa");
   if (usa !== null) {
@@ -398,8 +375,7 @@ setInterval(function () {
   }
   // うさぎが10000匹を超えた場合ジュピターを流してスタッフロールを表示
   if (usagi >= 10000 * staffRollCount) {
-    stopAll();
-    sound.soundis3.play();
+    play(sound.soundis3);
     const creimg = document.createElement("img");
     creimg.setAttribute("src", "image/staff.png");
     creimg.setAttribute("id", "staff");
@@ -419,9 +395,7 @@ setInterval(function () {
     // うさぎが1000匹を超える毎に大漁を表示しカルメン組曲を再生
   } else if (usagi >= 2 * tairyouCount) {
     if (notCarmen !== 1) {
-      stopAll();
-      sound.soundis1.currentTime = 0;
-      sound.soundis1.play();
+      play(sound.soundis1);
     }
     const creimg = document.createElement("img");
     creimg.setAttribute("src", "image/tairyou.png");
@@ -431,7 +405,7 @@ setInterval(function () {
     tairyou += 1;
   }
   redrawButton();
-}, 100);
+}
 
 // 0.1秒毎に状態チェック
 function achievement() {
@@ -1107,18 +1081,41 @@ function achievement() {
   }
 }
 
-document.getElementById("del")?.addEventListener("click", function () {
+function deleteData() {
   if (localStorage.usapri === 1) {
     alert("消せません");
   } else {
-    const del = confirm("全てのデータを初期化します。よろしいですか？");
+    const del = window.confirm("全てのデータを初期化します。よろしいですか？");
     if (del) {
       localStorage.clear();
       clearInterval(setInterval(achievement, 10));
-      location.reload();
+      window.location.reload();
     }
   }
-});
+}
+
+document.getElementById("mute_se")?.addEventListener("click", muteSE);
+
+document.getElementById("mute_bgm")?.addEventListener("click", muteBGM);
+
+document.getElementById("not_carmen")?.addEventListener("click", setNotCarmen);
+
+document.getElementById("play_ko")?.addEventListener("click", playKo);
+
+document.getElementById("play_ca")?.addEventListener("click", playCa);
+
+document.getElementById("play_hi")?.addEventListener("click", playHi);
+
+document.getElementById("version")?.addEventListener("click", showCredit);
+
+document.getElementById("tori")?.addEventListener("click", clickTori);
+
+document.getElementById("del")?.addEventListener("click", deleteData);
 
 document.getElementById("1")?.addEventListener("click", usafuya);
+
 setInterval(achievement, 1000);
+
+setInterval(displayScore, 1000);
+
+setInterval(showStatus, 100);

@@ -23,7 +23,7 @@ export function muteBGM() {
   sound.soundis8.volume = 0;
 }
 
-export function stopAll() {
+function stopAll() {
   sound.soundis1.pause();
   sound.soundis2.pause();
   sound.soundis3.pause();
@@ -32,4 +32,11 @@ export function stopAll() {
   sound.soundis6.pause();
   sound.soundis7.pause();
   sound.soundis8.pause();
+}
+
+export function play(target: HTMLAudioElement) {
+  stopAll();
+  // eslint-disable-next-line no-param-reassign
+  target.currentTime = 0;
+  target.play();
 }
