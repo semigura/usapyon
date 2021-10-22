@@ -2,17 +2,26 @@
 // eslint-disable-next-line import/extensions
 import { muteBGM, muteSE, play, sound } from "./soundSettings";
 
-let usagi = 0;
-let kuma = 0;
-let risu = 0;
-let aja = 0;
-let tori = 0;
+const total = {
+  usagi: 0,
+  kuma: 0,
+  risu: 0,
+  aja: 0,
+  tori: 0,
+  tairyou: 0,
+};
+const current = {
+  usagi: 0,
+  kuma: 0,
+  risu: 0,
+  aja: 0,
+  tori: 0,
+};
 let tairyou = 0;
 let notCarmen = 0;
 let tairyouCount = 1;
 let staffRollCount = 1;
 let playTime: number;
-let totalTairyou: number;
 let infotext: string;
 const usaran = [
   "image/usa (1).png",
@@ -24,11 +33,6 @@ const usaran = [
   "image/usa (7).png",
 ];
 let usasrc;
-let totalTori: number;
-let totalUsagi = 0;
-let totalKuma = 0;
-let totalRisu = 0;
-let totalAja = 0;
 // データ読み込み
 let launchTimes = Number(localStorage.getItem("launchTimes"));
 
@@ -51,27 +55,27 @@ function showInfo() {
 if (!localStorage.getItem("launchTimes")) {
   localStorage.clear();
   localStorage.setItem("launchTimes", "1");
-  localStorage.setItem("totalUsagi", "0");
-  localStorage.setItem("totalKuma", "0");
-  localStorage.setItem("totalRisu", "0");
-  localStorage.setItem("totalAja", "0");
-  localStorage.setItem("totalTori", "0");
-  totalUsagi = 0;
-  totalKuma = 0;
-  totalRisu = 0;
-  totalAja = 0;
-  totalTori = 0;
+  localStorage.setItem("total.usagi", "0");
+  localStorage.setItem("total.kuma", "0");
+  localStorage.setItem("total.risu", "0");
+  localStorage.setItem("total.aja", "0");
+  localStorage.setItem("total.tori", "0");
+  total.usagi = 0;
+  total.kuma = 0;
+  total.risu = 0;
+  total.aja = 0;
+  total.tori = 0;
   launchTimes = 1;
   infotext = "初回プレイです";
   document.addEventListener("DOMContentLoaded", showInfo);
 } else {
   /// /二回目以降の場合
-  totalUsagi = Number(localStorage.getItem("totalUsagi"));
-  totalKuma = Number(localStorage.getItem("totalKuma"));
-  totalRisu = Number(localStorage.getItem("totalRisu"));
-  totalAja = Number(localStorage.getItem("totalAja"));
-  totalTori = Number(localStorage.getItem("totalTori"));
-  totalTairyou = Number(localStorage.getItem("totalTairyou"));
+  total.usagi = Number(localStorage.getItem("total.usagi"));
+  total.kuma = Number(localStorage.getItem("total.kuma"));
+  total.risu = Number(localStorage.getItem("total.risu"));
+  total.aja = Number(localStorage.getItem("total.aja"));
+  total.tori = Number(localStorage.getItem("total.tori"));
+  total.tairyou = Number(localStorage.getItem("total.tairyou"));
   if (Number(localStorage.getItem("usapri")) !== 1) {
     launchTimes += 1;
     localStorage.setItem("launchTimes", launchTimes.toString());
@@ -80,28 +84,28 @@ if (!localStorage.getItem("launchTimes")) {
     infotext = "あなたはうさプリに入れられました";
   }
   infotext = `${infotext}<br>\n今まで累計${Number(
-    localStorage.getItem("totalUsagi")
+    localStorage.getItem("total.usagi")
   )}匹のうさぎを増やしました`;
-  if (totalKuma >= 1) {
+  if (total.kuma >= 1) {
     infotext = `${infotext}<br>\n今まで累計${Number(
-      localStorage.getItem("totalKuma")
+      localStorage.getItem("total.kuma")
     )}匹のくまを見つけました`;
   }
-  if (totalRisu >= 1) {
+  if (total.risu >= 1) {
     infotext = `${infotext}<br>\n今まで累計${Number(
-      localStorage.getItem("totalRisu")
+      localStorage.getItem("total.risu")
     )}匹のりすを見つけました`;
   }
-  if (totalAja >= 1) {
+  if (total.aja >= 1) {
     infotext = `${infotext}<br>\n今まで累計${Number(
-      localStorage.getItem("totalAja")
+      localStorage.getItem("total.aja")
     )}匹のあじゃを見つけました`;
   }
   document.addEventListener("DOMContentLoaded", showInfo);
 }
-if (localStorage.getItem("totalTairyou") === null) {
-  localStorage.setItem("totalTairyou", "0");
-  totalTairyou = Number(localStorage.getItem("totalTairyou"));
+if (localStorage.getItem("total.tairyou") === null) {
+  localStorage.setItem("total.tairyou", "0");
+  total.tairyou = Number(localStorage.getItem("total.tairyou"));
 }
 if (localStorage.getItem("usapriTimes") === null) {
   localStorage.setItem("usapriTimes", "0");
@@ -114,23 +118,30 @@ if (localStorage.getItem("playTime") === null) {
 }
 
 function dataSave() {
-  let totalUsagin = Number(localStorage.getItem("totalUsagi"));
-  let totalKuman = Number(localStorage.getItem("totalKuma"));
-  let totalRisun = Number(localStorage.getItem("totalRisu"));
-  let totalAjan = Number(localStorage.getItem("totalAja"));
-  let totalTairyoun = Number(localStorage.getItem("totalTairyou"));
-  totalUsagin += usagi;
-  totalKuman += kuma;
-  totalRisun += risu;
-  totalAjan += aja;
-  totalTairyoun += tairyou;
-  playTime = playTime + Math.floor(Date.now() / 1000) - launchTime;
-  localStorage.setItem("totalUsagi", totalUsagin.toString());
-  localStorage.setItem("totalKuma", totalKuman.toString());
-  localStorage.setItem("totalRisu", totalRisun.toString());
-  localStorage.setItem("totalAja", totalAjan.toString());
-  localStorage.setItem("totalTairyou", totalTairyoun.toString());
-  localStorage.setItem("playTime", playTime.toString());
+  localStorage.setItem(
+    "total.usagi",
+    (Number(localStorage.getItem("total.usagi")) + current.usagi).toString()
+  );
+  localStorage.setItem(
+    "total.kuma",
+    (Number(localStorage.getItem("total.kuma")) + current.kuma).toString()
+  );
+  localStorage.setItem(
+    "total.risu",
+    (Number(localStorage.getItem("total.risu")) + current.risu).toString()
+  );
+  localStorage.setItem(
+    "total.aja",
+    (Number(localStorage.getItem("total.aja")) + current.aja).toString()
+  );
+  localStorage.setItem(
+    "total.tairyou",
+    (Number(localStorage.getItem("total.tairyou")) + tairyou).toString()
+  );
+  localStorage.setItem(
+    "playTime",
+    (playTime + Math.floor(Date.now() / 1000) - launchTime).toString()
+  );
 }
 
 // データ保存
@@ -138,13 +149,17 @@ window.addEventListener("pagehide", dataSave);
 
 function displayScore() {
   const nowTime = Math.floor(Date.now() / 1000);
-  let score = Math.round(((totalUsagi + usagi) / launchTimes) * 10) / 10;
-  score += (Math.round(((totalKuma + kuma) / launchTimes) * 10) / 10) * 100;
-  score += (Math.round(((totalRisu + risu) / launchTimes) * 10) / 10) * 100;
-  score += (Math.round(((totalAja + aja) / launchTimes) * 10) / 10) * 2000;
-  score += (totalTori + tori) * 10;
+  let score =
+    Math.round(((total.usagi + current.usagi) / launchTimes) * 10) / 10;
+  score +=
+    (Math.round(((total.kuma + current.kuma) / launchTimes) * 10) / 10) * 100;
+  score +=
+    (Math.round(((total.risu + current.risu) / launchTimes) * 10) / 10) * 100;
+  score +=
+    (Math.round(((total.aja + current.aja) / launchTimes) * 10) / 10) * 2000;
+  score += (total.tori + current.tori) * 10;
   score += Number(localStorage.getItem("usapriTimes")) * 1000;
-  score += (totalTairyou + tairyou) * 100;
+  score += (total.tairyou + tairyou) * 100;
   score =
     (score * (Number(localStorage.getItem("totalAchievement")) + 10)) / 10;
   score =
@@ -155,12 +170,12 @@ function displayScore() {
     status.innerHTML =
       `累計プレイ回数 : ${launchTimes}回<br>\n` +
       `累計プレイ時間 : ${playTime + nowTime - launchTime}秒<br>\n` +
-      `累計うさぎ増やし数 : ${totalUsagi + usagi}匹<br>\n` +
-      `累計くま発見数 : ${totalKuma + kuma}匹<br>\n` +
-      `累計りす発見数 : ${totalRisu + risu}匹<br>\n` +
-      `累計あじゃ発見数 : ${totalAja + aja}匹<br>\n${
-        totalTori + tori >= 1
-          ? `累計鳥になった回数 : ${totalTori + tori}回<br>\n`
+      `累計うさぎ増やし数 : ${total.usagi + current.usagi}匹<br>\n` +
+      `累計くま発見数 : ${total.kuma + current.kuma}匹<br>\n` +
+      `累計りす発見数 : ${total.risu + current.risu}匹<br>\n` +
+      `累計あじゃ発見数 : ${total.aja + current.aja}匹<br>\n${
+        total.tori + current.tori >= 1
+          ? `累計鳥になった回数 : ${total.tori + current.tori}回<br>\n`
           : ""
       }${
         Number(localStorage.getItem("usapriTimes")) >= 1
@@ -169,20 +184,20 @@ function displayScore() {
             )}回<br>\n`
           : ""
       }${
-        totalTairyou + tairyou >= 1
-          ? `累計大漁回数 : ${totalTairyou + tairyou}回<br>\n`
+        total.tairyou + tairyou >= 1
+          ? `累計大漁回数 : ${total.tairyou + tairyou}回<br>\n`
           : ""
       }1プレイでの平均うさぎ増やし数 : ${
-        Math.round(((totalUsagi + usagi) / launchTimes) * 10) / 10
+        Math.round(((total.usagi + current.usagi) / launchTimes) * 10) / 10
       }匹<br>\n` +
       `1プレイでの平均くま発見数 : ${
-        Math.round(((totalKuma + kuma) / launchTimes) * 10) / 10
+        Math.round(((total.kuma + current.kuma) / launchTimes) * 10) / 10
       }匹<br>\n` +
       `1プレイでの平均りす発見数 : ${
-        Math.round(((totalRisu + risu) / launchTimes) * 10) / 10
+        Math.round(((total.risu + current.risu) / launchTimes) * 10) / 10
       }匹<br>\n` +
       `1プレイでの平均あじゃ発見数 : ${
-        Math.round(((totalAja + aja) / launchTimes) * 10) / 10
+        Math.round(((total.aja + current.aja) / launchTimes) * 10) / 10
       }匹<br>\nスコア : ${score}点<br>\n`;
   }
 }
@@ -264,18 +279,20 @@ if (localStorage.getItem("mute") === "1") {
 function clickTori() {
   sound.soundis7.play();
   alert("できません");
-  if (localStorage.getItem("totalTori") === null) {
-    localStorage.setItem("totalTori", "1");
+  if (localStorage.getItem("total.tori") === null) {
+    localStorage.setItem("total.tori", "1");
   } else {
-    let totalTorin = Number(localStorage.getItem("totalTori"));
-    totalTorin += 1;
-    localStorage.setItem("totalTori", totalTorin.toString());
+    localStorage.setItem(
+      "total.tori",
+      (Number(localStorage.getItem("total.tori")) + 1).toString()
+    );
   }
-  tori += 1;
-  if (tori >= 5) {
-    let usapriTimes = Number(localStorage.getItem("usapriTimes"));
-    usapriTimes += 1;
-    localStorage.setItem("usapriTimes", usapriTimes.toString());
+  current.tori += 1;
+  if (current.tori >= 5) {
+    localStorage.setItem(
+      "usapriTimes",
+      (Number(localStorage.getItem("usapriTimes")) + 1).toString()
+    );
     alert("鳥になりすぎです");
     window.location.href = "usapri.html";
     localStorage.setItem("usapri", "1");
@@ -293,11 +310,11 @@ function usafuya() {
   switch (random100) {
     case 0:
       usasrc = "image/risu.png";
-      risu += 1;
+      current.risu += 1;
       break;
     case 1:
       usasrc = "image/kuma.png";
-      kuma += 1;
+      current.kuma += 1;
       break;
     case 2:
       switch (random20) {
@@ -305,17 +322,17 @@ function usafuya() {
           sound.soundis6.currentTime = 0;
           sound.soundis6.play();
           usasrc = "image/aja.png";
-          aja += 1;
+          current.aja += 1;
           break;
         default:
           usasrc = usaran[Math.floor(Math.random() * usaran.length)];
-          usagi += 1;
+          current.usagi += 1;
           break;
       }
       break;
     default:
       usasrc = usaran[Math.floor(Math.random() * usaran.length)];
-      usagi += 1;
+      current.usagi += 1;
       break;
   }
   const createImg = document.createElement("img");
@@ -330,7 +347,7 @@ let redrawCount = 1;
 function redrawButton() {
   const initialButton = document.getElementById("1");
   // うさぎが500匹を超える毎にボタン再描画
-  if (usagi >= 500 * redrawCount) {
+  if (current.usagi >= 500 * redrawCount) {
     const createButton = document.createElement("button");
     const newButtonId = redrawCount + 1;
     createButton.setAttribute("id", newButtonId.toString());
@@ -351,15 +368,15 @@ function redrawButton() {
 }
 
 function showStatus() {
-  let u = `${usagi}匹のうさぎがいます`;
-  if (kuma >= 1) {
-    u = `${u}<br>\n${kuma}匹のくまがいます`;
+  let u = `${current.usagi}匹のうさぎがいます`;
+  if (current.kuma >= 1) {
+    u = `${u}<br>\n${current.kuma}匹のくまがいます`;
   }
-  if (risu >= 1) {
-    u = `${u}<br>\n${risu}匹のりすがいます`;
+  if (current.risu >= 1) {
+    u = `${u}<br>\n${current.risu}匹のりすがいます`;
   }
-  if (aja >= 1) {
-    u = `${u}<br>\n${aja}匹のあじゃがいます`;
+  if (current.aja >= 1) {
+    u = `${u}<br>\n${current.aja}匹のあじゃがいます`;
   }
 
   const usa = document.getElementById("usa");
@@ -367,7 +384,7 @@ function showStatus() {
     usa.innerHTML = u;
   }
   // うさぎが10000匹を超えた場合ジュピターを流してスタッフロールを表示
-  if (usagi >= 10000 * staffRollCount) {
+  if (current.usagi >= 10000 * staffRollCount) {
     play(sound.soundis3);
     const creimg = document.createElement("img");
     creimg.setAttribute("src", "image/staff.png");
@@ -386,7 +403,7 @@ function showStatus() {
     staffRollCount += 1;
     tairyouCount += 1;
     // うさぎが1000匹を超える毎に大漁を表示しカルメン組曲を再生
-  } else if (usagi >= 2 * tairyouCount) {
+  } else if (current.usagi >= 2 * tairyouCount) {
     if (notCarmen !== 1) {
       play(sound.soundis1);
     }
@@ -407,151 +424,151 @@ function checkAchievement() {
   let totalAchievement = 0;
   const achievements = [
     {
-      condition: totalUsagi + usagi >= 100,
+      condition: total.usagi + current.usagi >= 100,
       number: "achievement1_1",
       description: "累計うさぎ数100匹突破",
       title: "うさぴょんLv.1",
     },
     {
-      condition: totalUsagi + usagi >= 500,
+      condition: total.usagi + current.usagi >= 500,
       number: "achievement1_2",
       description: "累計うさぎ数500匹突破",
       title: "うさぴょんLv.2",
     },
     {
-      condition: totalUsagi + usagi >= 1000,
+      condition: total.usagi + current.usagi >= 1000,
       number: "achievement1_3",
       description: "累計うさぎ数1000匹突破",
       title: "うさぴょんLv.3",
     },
     {
-      condition: totalUsagi + usagi >= 5000,
+      condition: total.usagi + current.usagi >= 5000,
       number: "achievement1_4",
       description: "累計うさぎ数5000匹突破",
       title: "うさぴょんLv.4",
     },
     {
-      condition: totalUsagi + usagi >= 10000,
+      condition: total.usagi + current.usagi >= 10000,
       number: "achievement1_5",
       description: "累計うさぎ数10000匹突破",
       title: "うさぴょんLv.5",
     },
     {
-      condition: totalKuma + kuma >= 1,
+      condition: total.kuma + current.kuma >= 1,
       number: "achievement2_1",
       description: "くま発見",
       title: "くまぴょんLv.1",
     },
     {
-      condition: totalKuma + kuma >= 5,
+      condition: total.kuma + current.kuma >= 5,
       number: "achievement2_2",
       description: "累計くま発見数5匹突破",
       title: "くまぴょんLv.2",
     },
     {
-      condition: totalKuma + kuma >= 10,
+      condition: total.kuma + current.kuma >= 10,
       number: "achievement2_3",
       description: "累計くま発見数10匹突破",
       title: "くまぴょんLv.3",
     },
     {
-      condition: totalKuma + kuma >= 50,
+      condition: total.kuma + current.kuma >= 50,
       number: "achievement2_4",
       description: "累計くま発見数50匹突破",
       title: "くまぴょんLv.4",
     },
     {
-      condition: totalKuma + kuma >= 100,
+      condition: total.kuma + current.kuma >= 100,
       number: "achievement2_5",
       description: "累計くま発見数100匹突破",
       title: "くまぴょんLv.5",
     },
     {
-      condition: totalRisu + risu >= 1,
+      condition: total.risu + current.risu >= 1,
       number: "achievement3_1",
       description: "りす発見",
       title: "トッテナムLv.1",
     },
     {
-      condition: totalRisu + risu >= 5,
+      condition: total.risu + current.risu >= 5,
       number: "achievement3_2",
       description: "累計りす発見数5匹突破",
       title: "トッテナムLv.2",
     },
     {
-      condition: totalRisu + risu >= 10,
+      condition: total.risu + current.risu >= 10,
       number: "achievement3_3",
       description: "累計りす発見数10匹突破",
       title: "トッテナムLv.3",
     },
     {
-      condition: totalRisu + risu >= 50,
+      condition: total.risu + current.risu >= 50,
       number: "achievement3_4",
       description: "累計りす発見数50匹突破",
       title: "トッテナムLv.4",
     },
     {
-      condition: totalRisu + risu >= 100,
+      condition: total.risu + current.risu >= 100,
       number: "achievement3_5",
       description: "累計りす発見数100匹突破",
       title: "トッテナムLv.5",
     },
     {
-      condition: totalAja + aja >= 1,
+      condition: total.aja + current.aja >= 1,
       number: "achievement4_1",
       description: "あじゃ発見",
       title: "あじゃぴょんLv.1",
     },
     {
-      condition: totalAja + aja >= 3,
+      condition: total.aja + current.aja >= 3,
       number: "achievement4_2",
       description: "累計あじゃ発見数3匹突破",
       title: "あじゃぴょんLv.2",
     },
     {
-      condition: totalAja + aja >= 5,
+      condition: total.aja + current.aja >= 5,
       number: "achievement4_3",
       description: "累計あじゃ発見数5匹突破",
       title: "あじゃぴょんLv.3",
     },
     {
-      condition: totalAja + aja >= 10,
+      condition: total.aja + current.aja >= 10,
       number: "achievement4_4",
       description: "累計あじゃ発見数10匹突破",
       title: "あじゃぴょんLv.4",
     },
     {
-      condition: totalAja + aja >= 30,
+      condition: total.aja + current.aja >= 30,
       number: "achievement4_5",
       description: "累計あじゃ発見数30匹突破",
       title: "あじゃぴょんLv.5",
     },
     {
-      condition: Number(localStorage.getItem("totalTori")) >= 1,
+      condition: Number(localStorage.getItem("total.tori")) >= 1,
       number: "achievement5_1",
       description: "鳥になった回数1回突破",
       title: "鳥貴族Lv.1",
     },
     {
-      condition: Number(localStorage.getItem("totalTori")) >= 5,
+      condition: Number(localStorage.getItem("total.tori")) >= 5,
       number: "achievement5_2",
       description: "鳥になった回数5回突破",
       title: "鳥貴族Lv.2",
     },
     {
-      condition: Number(localStorage.getItem("totalTori")) >= 10,
+      condition: Number(localStorage.getItem("total.tori")) >= 10,
       number: "achievement5_3",
       description: "鳥になった回数10回突破",
       title: "鳥貴族Lv.3",
     },
     {
-      condition: Number(localStorage.getItem("totalTori")) >= 30,
+      condition: Number(localStorage.getItem("total.tori")) >= 30,
       number: "achievement5_4",
       description: "鳥になった回数30回突破",
       title: "鳥貴族Lv.4",
     },
     {
-      condition: Number(localStorage.getItem("totalTori")) >= 50,
+      condition: Number(localStorage.getItem("total.tori")) >= 50,
       number: "achievement5_5",
       description: "鳥になった回数50回突破",
       title: "鳥貴族Lv.5",
@@ -617,66 +634,78 @@ function checkAchievement() {
       title: "うさぴょん中毒Lv.5",
     },
     {
-      condition: totalTairyou + tairyou >= 1,
+      condition: total.tairyou + tairyou >= 1,
       number: "achievement8_1",
       description: "大漁1回突破",
       title: "大漁Lv.1",
     },
     {
-      condition: totalTairyou + tairyou >= 5,
+      condition: total.tairyou + tairyou >= 5,
       number: "achievement8_2",
       description: "大漁5回突破",
       title: "大漁Lv.2",
     },
     {
-      condition: totalTairyou + tairyou >= 10,
+      condition: total.tairyou + tairyou >= 10,
       number: "achievement8_3",
       description: "大漁10回突破",
       title: "大漁Lv.3",
     },
     {
-      condition: totalTairyou + tairyou >= 50,
+      condition: total.tairyou + tairyou >= 50,
       number: "achievement8_4",
       description: "大漁50回突破",
       title: "大漁Lv.4",
     },
     {
-      condition: totalTairyou + tairyou >= 100,
+      condition: total.tairyou + tairyou >= 100,
       number: "achievement8_5",
       description: "大漁100回突破",
       title: "大漁Lv.5",
     },
     {
-      condition: usagi === 0 && kuma === 0 && risu === 0 && aja === 1,
+      condition:
+        current.usagi === 0 &&
+        current.kuma === 0 &&
+        current.risu === 0 &&
+        current.aja === 1,
       number: "achievement9_1",
       description: "最初にあじゃを出した",
       title: "奇跡のあじゃ",
     },
     {
-      condition: usagi === 0 && risu === 0 && aja === 0 && kuma === 1,
+      condition:
+        current.usagi === 0 &&
+        current.risu === 0 &&
+        current.aja === 0 &&
+        current.kuma === 1,
       number: "achievement9_2",
       description: "最初にくまを出した",
       title: "幸運のくま",
     },
     {
-      condition: usagi === 0 && kuma === 0 && aja === 0 && risu === 1,
+      condition:
+        current.usagi === 0 &&
+        current.kuma === 0 &&
+        current.aja === 0 &&
+        current.risu === 1,
       number: "achievement9_3",
       description: "最初にりすを出した",
       title: "運命のトッテナム",
     },
     {
       condition:
-        usagi === 1000 &&
-        kuma === 0 &&
-        aja === 0 &&
-        risu === 0 &&
+        current.usagi === 1000 &&
+        current.kuma === 0 &&
+        current.aja === 0 &&
+        current.risu === 0 &&
         Number(localStorage.getItem("usapri")) !== 1,
       number: "achievement9_4",
       description: "うさぎのみで1000匹を達成した",
       title: "うさぴょんプレイヤーの鑑",
     },
     {
-      condition: usagi >= 10000,
+      condition: current.usagi >= 10000,
       number: "achievement10_1",
       description: "エンディングを見た",
       title: "Thank you for playing",
