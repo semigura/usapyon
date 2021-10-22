@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 // eslint-disable-next-line import/extensions
 import { muteBGM, muteSE, play, sound } from "./soundSettings";
 
@@ -29,13 +30,9 @@ let totalKuma = 0;
 let totalRisu = 0;
 let totalAja = 0;
 // データ読み込み
-let launchTimes = Number(localStorage.launchTimes);
+let launchTimes = Number(localStorage.getItem("launchTimes"));
 
 const launchTime = Math.floor(Date.now() / 1000);
-
-console.log(localStorage);
-
-console.log(localStorage.achievement7_5);
 
 function fadeOutInfo() {
   $("#info").fadeOut("slow");
@@ -51,7 +48,7 @@ function showInfo() {
 }
 
 /// /初回プレイの場合
-if (!localStorage.launchTimes) {
+if (!localStorage.getItem("launchTimes")) {
   localStorage.clear();
   localStorage.setItem("launchTimes", "1");
   localStorage.setItem("totalUsagi", "0");
@@ -69,13 +66,13 @@ if (!localStorage.launchTimes) {
   document.addEventListener("DOMContentLoaded", showInfo);
 } else {
   /// /二回目以降の場合
-  totalUsagi = Number(localStorage.totalUsagi);
-  totalKuma = Number(localStorage.totalKuma);
-  totalRisu = Number(localStorage.totalRisu);
-  totalAja = Number(localStorage.totalAja);
-  totalTori = Number(localStorage.totalTori);
-  totalTairyou = Number(localStorage.totalTairyou);
-  if (localStorage.usapri !== 1) {
+  totalUsagi = Number(localStorage.getItem("totalUsagi"));
+  totalKuma = Number(localStorage.getItem("totalKuma"));
+  totalRisu = Number(localStorage.getItem("totalRisu"));
+  totalAja = Number(localStorage.getItem("totalAja"));
+  totalTori = Number(localStorage.getItem("totalTori"));
+  totalTairyou = Number(localStorage.getItem("totalTairyou"));
+  if (Number(localStorage.getItem("usapri")) !== 1) {
     launchTimes += 1;
     localStorage.setItem("launchTimes", launchTimes.toString());
     infotext = `${launchTimes}回目のプレイです`;
@@ -83,45 +80,45 @@ if (!localStorage.launchTimes) {
     infotext = "あなたはうさプリに入れられました";
   }
   infotext = `${infotext}<br>\n今まで累計${Number(
-    localStorage.totalUsagi
+    localStorage.getItem("totalUsagi")
   )}匹のうさぎを増やしました`;
   if (totalKuma >= 1) {
     infotext = `${infotext}<br>\n今まで累計${Number(
-      localStorage.totalKuma
+      localStorage.getItem("totalKuma")
     )}匹のくまを見つけました`;
   }
   if (totalRisu >= 1) {
     infotext = `${infotext}<br>\n今まで累計${Number(
-      localStorage.totalRisu
+      localStorage.getItem("totalRisu")
     )}匹のりすを見つけました`;
   }
   if (totalAja >= 1) {
     infotext = `${infotext}<br>\n今まで累計${Number(
-      localStorage.totalAja
+      localStorage.getItem("totalAja")
     )}匹のあじゃを見つけました`;
   }
   document.addEventListener("DOMContentLoaded", showInfo);
 }
 if (localStorage.getItem("totalTairyou") === null) {
   localStorage.setItem("totalTairyou", "0");
-  totalTairyou = Number(localStorage.totalTairyou);
+  totalTairyou = Number(localStorage.getItem("totalTairyou"));
 }
 if (localStorage.getItem("usapriTimes") === null) {
   localStorage.setItem("usapriTimes", "0");
 }
 if (localStorage.getItem("playTime") === null) {
   localStorage.setItem("playTime", "0");
-  playTime = Number(localStorage.playTime);
+  playTime = Number(localStorage.getItem("playTime"));
 } else {
-  playTime = Number(localStorage.playTime);
+  playTime = Number(localStorage.getItem("playTime"));
 }
 
 function dataSave() {
-  let totalUsagin = Number(localStorage.totalUsagi);
-  let totalKuman = Number(localStorage.totalKuma);
-  let totalRisun = Number(localStorage.totalRisu);
-  let totalAjan = Number(localStorage.totalAja);
-  let totalTairyoun = Number(localStorage.totalTairyou);
+  let totalUsagin = Number(localStorage.getItem("totalUsagi"));
+  let totalKuman = Number(localStorage.getItem("totalKuma"));
+  let totalRisun = Number(localStorage.getItem("totalRisu"));
+  let totalAjan = Number(localStorage.getItem("totalAja"));
+  let totalTairyoun = Number(localStorage.getItem("totalTairyou"));
   totalUsagin += usagi;
   totalKuman += kuma;
   totalRisun += risu;
@@ -146,9 +143,10 @@ function displayScore() {
   score += (Math.round(((totalRisu + risu) / launchTimes) * 10) / 10) * 100;
   score += (Math.round(((totalAja + aja) / launchTimes) * 10) / 10) * 2000;
   score += (totalTori + tori) * 10;
-  score += Number(localStorage.usapriTimes) * 1000;
+  score += Number(localStorage.getItem("usapriTimes")) * 1000;
   score += (totalTairyou + tairyou) * 100;
-  score = (score * (Number(localStorage.totalAchievement) + 10)) / 10;
+  score =
+    (score * (Number(localStorage.getItem("totalAchievement")) + 10)) / 10;
   score =
     (score * (Math.round((playTime + nowTime - launchTime) / 60) + 10)) / 10;
   score = Math.round(score);
@@ -165,8 +163,10 @@ function displayScore() {
           ? `累計鳥になった回数 : ${totalTori + tori}回<br>\n`
           : ""
       }${
-        Number(localStorage.usapriTimes) >= 1
-          ? `累計うさプリ収監回数 : ${localStorage.usapriTimes}回<br>\n`
+        Number(localStorage.getItem("usapriTimes")) >= 1
+          ? `累計うさプリ収監回数 : ${localStorage.getItem(
+              "usapriTimes"
+            )}回<br>\n`
           : ""
       }${
         totalTairyou + tairyou >= 1
@@ -185,17 +185,6 @@ function displayScore() {
         Math.round(((totalAja + aja) / launchTimes) * 10) / 10
       }匹<br>\nスコア : ${score}点<br>\n`;
   }
-}
-
-// 実績表示
-function achshow() {
-  const info = document.getElementById("info");
-  if (info !== null) {
-    info.innerHTML = infotext;
-  }
-  $("#info").show();
-  sound.soundis4.play();
-  setTimeout(fadeOutInfo, 5000);
 }
 
 // BGM流す
@@ -278,13 +267,13 @@ function clickTori() {
   if (localStorage.getItem("totalTori") === null) {
     localStorage.setItem("totalTori", "1");
   } else {
-    let totalTorin = Number(localStorage.totalTori);
+    let totalTorin = Number(localStorage.getItem("totalTori"));
     totalTorin += 1;
     localStorage.setItem("totalTori", totalTorin.toString());
   }
   tori += 1;
   if (tori >= 5) {
-    let usapriTimes = Number(localStorage.usapriTimes);
+    let usapriTimes = Number(localStorage.getItem("usapriTimes"));
     usapriTimes += 1;
     localStorage.setItem("usapriTimes", usapriTimes.toString());
     alert("鳥になりすぎです");
@@ -412,440 +401,338 @@ function showStatus() {
 }
 
 // 0.1秒毎に状態チェック
-function achievement() {
+function checkAchievement() {
   const nowTime = Math.floor(Date.now() / 1000);
   let achievementList = "";
   let totalAchievement = 0;
-  function hasAchievement(
-    achievementNumber: string,
-    achievementTitle: string,
-    achievementDescription: string
-  ) {
-    if (localStorage.getItem(achievementNumber) !== null) {
-      achievementList += `<span class="notice">${achievementTitle}</span> - ${achievementDescription}<br>\n`;
+  const achievements = [
+    {
+      condition: totalUsagi + usagi >= 100,
+      number: "achievement1_1",
+      description: "累計うさぎ数100匹突破",
+      title: "うさぴょんLv.1",
+    },
+    {
+      condition: totalUsagi + usagi >= 500,
+      number: "achievement1_2",
+      description: "累計うさぎ数500匹突破",
+      title: "うさぴょんLv.2",
+    },
+    {
+      condition: totalUsagi + usagi >= 1000,
+      number: "achievement1_3",
+      description: "累計うさぎ数1000匹突破",
+      title: "うさぴょんLv.3",
+    },
+    {
+      condition: totalUsagi + usagi >= 5000,
+      number: "achievement1_4",
+      description: "累計うさぎ数5000匹突破",
+      title: "うさぴょんLv.4",
+    },
+    {
+      condition: totalUsagi + usagi >= 10000,
+      number: "achievement1_5",
+      description: "累計うさぎ数10000匹突破",
+      title: "うさぴょんLv.5",
+    },
+    {
+      condition: totalKuma + kuma >= 1,
+      number: "achievement2_1",
+      description: "くま発見",
+      title: "くまぴょんLv.1",
+    },
+    {
+      condition: totalKuma + kuma >= 5,
+      number: "achievement2_2",
+      description: "累計くま発見数5匹突破",
+      title: "くまぴょんLv.2",
+    },
+    {
+      condition: totalKuma + kuma >= 10,
+      number: "achievement2_3",
+      description: "累計くま発見数10匹突破",
+      title: "くまぴょんLv.3",
+    },
+    {
+      condition: totalKuma + kuma >= 50,
+      number: "achievement2_4",
+      description: "累計くま発見数50匹突破",
+      title: "くまぴょんLv.4",
+    },
+    {
+      condition: totalKuma + kuma >= 100,
+      number: "achievement2_5",
+      description: "累計くま発見数100匹突破",
+      title: "くまぴょんLv.5",
+    },
+    {
+      condition: totalRisu + risu >= 1,
+      number: "achievement3_1",
+      description: "りす発見",
+      title: "トッテナムLv.1",
+    },
+    {
+      condition: totalRisu + risu >= 5,
+      number: "achievement3_2",
+      description: "累計りす発見数5匹突破",
+      title: "トッテナムLv.2",
+    },
+    {
+      condition: totalRisu + risu >= 10,
+      number: "achievement3_3",
+      description: "累計りす発見数10匹突破",
+      title: "トッテナムLv.3",
+    },
+    {
+      condition: totalRisu + risu >= 50,
+      number: "achievement3_4",
+      description: "累計りす発見数50匹突破",
+      title: "トッテナムLv.4",
+    },
+    {
+      condition: totalRisu + risu >= 100,
+      number: "achievement3_5",
+      description: "累計りす発見数100匹突破",
+      title: "トッテナムLv.5",
+    },
+    {
+      condition: totalAja + aja >= 1,
+      number: "achievement4_1",
+      description: "あじゃ発見",
+      title: "あじゃぴょんLv.1",
+    },
+    {
+      condition: totalAja + aja >= 3,
+      number: "achievement4_2",
+      description: "累計あじゃ発見数3匹突破",
+      title: "あじゃぴょんLv.2",
+    },
+    {
+      condition: totalAja + aja >= 5,
+      number: "achievement4_3",
+      description: "累計あじゃ発見数5匹突破",
+      title: "あじゃぴょんLv.3",
+    },
+    {
+      condition: totalAja + aja >= 10,
+      number: "achievement4_4",
+      description: "累計あじゃ発見数10匹突破",
+      title: "あじゃぴょんLv.4",
+    },
+    {
+      condition: totalAja + aja >= 30,
+      number: "achievement4_5",
+      description: "累計あじゃ発見数30匹突破",
+      title: "あじゃぴょんLv.5",
+    },
+    {
+      condition: Number(localStorage.getItem("totalTori")) >= 1,
+      number: "achievement5_1",
+      description: "鳥になった回数1回突破",
+      title: "鳥貴族Lv.1",
+    },
+    {
+      condition: Number(localStorage.getItem("totalTori")) >= 5,
+      number: "achievement5_2",
+      description: "鳥になった回数5回突破",
+      title: "鳥貴族Lv.2",
+    },
+    {
+      condition: Number(localStorage.getItem("totalTori")) >= 10,
+      number: "achievement5_3",
+      description: "鳥になった回数10回突破",
+      title: "鳥貴族Lv.3",
+    },
+    {
+      condition: Number(localStorage.getItem("totalTori")) >= 30,
+      number: "achievement5_4",
+      description: "鳥になった回数30回突破",
+      title: "鳥貴族Lv.4",
+    },
+    {
+      condition: Number(localStorage.getItem("totalTori")) >= 50,
+      number: "achievement5_5",
+      description: "鳥になった回数50回突破",
+      title: "鳥貴族Lv.5",
+    },
+    {
+      condition: Number(localStorage.getItem("usapriTimes")) >= 1,
+      number: "achievement6_1",
+      description: "うさプリ収監",
+      title: "うさプリズナーLv.1",
+    },
+    {
+      condition: Number(localStorage.getItem("usapriTimes")) >= 3,
+      number: "achievement6_2",
+      description: "うさプリ収監3回突破",
+      title: "うさプリズナーLv.2",
+    },
+    {
+      condition: Number(localStorage.getItem("usapriTimes")) >= 5,
+      number: "achievement6_3",
+      description: "うさプリ収監5回突破",
+      title: "うさプリズナーLv.3",
+    },
+    {
+      condition: Number(localStorage.getItem("usapriTimes")) >= 10,
+      number: "achievement6_4",
+      description: "うさプリ収監10回突破",
+      title: "うさプリズナーLv.4",
+    },
+    {
+      condition: Number(localStorage.getItem("usapriTimes")) >= 30,
+      number: "achievement6_5",
+      description: "うさプリ収監30回突破",
+      title: "うさプリズナーLv.5",
+    },
+    {
+      condition: playTime + nowTime - launchTime >= 10,
+      number: "achievement7_1",
+      description: "累計プレイ時間10秒突破",
+      title: "うさぴょん中毒Lv.1",
+    },
+    {
+      condition: playTime + nowTime - launchTime >= 60,
+      number: "achievement7_2",
+      description: "累計プレイ時間60秒突破",
+      title: "うさぴょん中毒Lv.2",
+    },
+    {
+      condition: playTime + nowTime - launchTime >= 600,
+      number: "achievement7_3",
+      description: "累計プレイ時間600秒突破",
+      title: "うさぴょん中毒Lv.3",
+    },
+    {
+      condition: playTime + nowTime - launchTime >= 3600,
+      number: "achievement7_4",
+      description: "累計プレイ時間3600秒突破",
+      title: "うさぴょん中毒Lv.4",
+    },
+    {
+      condition: playTime + nowTime - launchTime >= 43200,
+      number: "achievement7_5",
+      description: "累計プレイ時間43200秒突破",
+      title: "うさぴょん中毒Lv.5",
+    },
+    {
+      condition: totalTairyou + tairyou >= 1,
+      number: "achievement8_1",
+      description: "大漁1回突破",
+      title: "大漁Lv.1",
+    },
+    {
+      condition: totalTairyou + tairyou >= 5,
+      number: "achievement8_2",
+      description: "大漁5回突破",
+      title: "大漁Lv.2",
+    },
+    {
+      condition: totalTairyou + tairyou >= 10,
+      number: "achievement8_3",
+      description: "大漁10回突破",
+      title: "大漁Lv.3",
+    },
+    {
+      condition: totalTairyou + tairyou >= 50,
+      number: "achievement8_4",
+      description: "大漁50回突破",
+      title: "大漁Lv.4",
+    },
+    {
+      condition: totalTairyou + tairyou >= 100,
+      number: "achievement8_5",
+      description: "大漁100回突破",
+      title: "大漁Lv.5",
+    },
+    {
+      condition: usagi === 0 && kuma === 0 && risu === 0 && aja === 1,
+      number: "achievement9_1",
+      description: "最初にあじゃを出した",
+      title: "奇跡のあじゃ",
+    },
+    {
+      condition: usagi === 0 && risu === 0 && aja === 0 && kuma === 1,
+      number: "achievement9_2",
+      description: "最初にくまを出した",
+      title: "幸運のくま",
+    },
+    {
+      condition: usagi === 0 && kuma === 0 && aja === 0 && risu === 1,
+      number: "achievement9_3",
+      description: "最初にりすを出した",
+      title: "運命のトッテナム",
+    },
+    {
+      condition:
+        usagi === 1000 &&
+        kuma === 0 &&
+        aja === 0 &&
+        risu === 0 &&
+        Number(localStorage.getItem("usapri")) !== 1,
+      number: "achievement9_4",
+      description: "うさぎのみで1000匹を達成した",
+      title: "うさぴょんプレイヤーの鑑",
+    },
+    {
+      condition: usagi >= 10000,
+      number: "achievement10_1",
+      description: "エンディングを見た",
+      title: "Thank you for playing",
+    },
+    {
+      condition: totalAchievement >= 10,
+      number: "achievement11_1",
+      description: "実績10個解除",
+      title: "うさぴょんマスターLv.1",
+    },
+    {
+      condition: totalAchievement >= 20,
+      number: "achievement11_2",
+      description: "実績20個解除",
+      title: "うさぴょんマスターLv.2",
+    },
+    {
+      condition: totalAchievement >= 30,
+      number: "achievement11_3",
+      description: "実績30個解除",
+      title: "うさぴょんマスターLv.3",
+    },
+    {
+      condition: totalAchievement >= 40,
+      number: "achievement11_4",
+      description: "実績40個解除",
+      title: "うさぴょんマスターLv.4",
+    },
+    {
+      condition: totalAchievement >= 49,
+      number: "achievement11_5",
+      description: "全実績解除",
+      title: "Congratulations!",
+    },
+  ];
+  achievements.forEach((achievement) => {
+    if (localStorage.getItem(achievement.number) === null) {
+      if (!achievement.condition) {
+        return false;
+      }
+      infotext = `<span class="notice">${achievement.description}🐰実績：${achievement.title}解除</span><br>\n${infotext}`;
+      localStorage.setItem(achievement.number, "1");
+      const info = document.getElementById("info");
+      if (info !== null) {
+        info.innerHTML = infotext;
+      }
+      $("#info").show();
+      sound.soundis4.play();
+      setTimeout(fadeOutInfo, 5000);
+    } else {
+      achievementList += `<span class="notice">${achievement.title}</span> - ${achievement.description}<br>\n`;
       totalAchievement += 1;
     }
-  }
-  hasAchievement("achievement1_1", "うさぴょんLv.1", "累計うさぎ数100匹突破");
-  hasAchievement("achievement1_2", "うさぴょんLv.2", "累計うさぎ数500匹突破");
-  hasAchievement("achievement1_3", "うさぴょんLv.3", "累計うさぎ数1000匹突破");
-  hasAchievement("achievement1_4", "うさぴょんLv.4", "累計うさぎ数5000匹突破");
-  hasAchievement("achievement1_5", "うさぴょんLv.5", "累計うさぎ数10000匹突破");
-  hasAchievement("achievement2_1", "くまぴょんLv.1", "くま発見");
-  hasAchievement("achievement2_2", "くまぴょんLv.2", "累計くま発見数5匹突破");
-  hasAchievement("achievement2_3", "くまぴょんLv.3", "累計くま発見数10匹突破");
-  hasAchievement("achievement2_4", "くまぴょんLv.4", "累計くま発見数50匹突破");
-  hasAchievement("achievement2_5", "くまぴょんLv.5", "累計くま発見数100匹突破");
-  hasAchievement("achievement3_1", "トッテナムLv.1", "りす発見");
-  hasAchievement("achievement3_2", "トッテナムLv.2", "累計りす発見数5匹突破");
-  hasAchievement("achievement3_3", "トッテナムLv.3", "累計りす発見数10匹突破");
-  hasAchievement("achievement3_4", "トッテナムLv.4", "累計りす発見数50匹突破");
-  hasAchievement("achievement3_5", "トッテナムLv.5", "累計りす発見数100匹突破");
-  hasAchievement("achievement4_1", "あじゃぴょんLv.1", "あじゃ発見");
-  hasAchievement(
-    "achievement4_2",
-    "あじゃぴょんLv.2",
-    "累計あじゃ発見数3匹突破"
-  );
-  hasAchievement(
-    "achievement4_3",
-    "あじゃぴょんLv.3",
-    "累計あじゃ発見数5匹突破"
-  );
-  hasAchievement(
-    "achievement4_4",
-    "あじゃぴょんLv.4",
-    "累計あじゃ発見数10匹突破"
-  );
-  hasAchievement(
-    "achievement4_5",
-    "あじゃぴょんLv.5",
-    "累計あじゃ発見数30匹突破"
-  );
-  hasAchievement("achievement5_1", "鳥貴族Lv.1", "鳥になった回数1回突破");
-  hasAchievement("achievement5_2", "鳥貴族Lv.2", "鳥になった回数5回突破");
-  hasAchievement("achievement5_3", "鳥貴族Lv.3", "鳥になった回数10回突破");
-  hasAchievement("achievement5_4", "鳥貴族Lv.4", "鳥になった回数30回突破");
-  hasAchievement("achievement5_5", "鳥貴族Lv.5", "鳥になった回数50回突破");
-  hasAchievement("achievement6_1", "うさプリズナーLv.1", "うさプリ収監");
-  hasAchievement("achievement6_2", "うさプリズナーLv.2", "うさプリ収監3回突破");
-  hasAchievement("achievement6_3", "うさプリズナーLv.3", "うさプリ収監5回突破");
-  hasAchievement(
-    "achievement6_4",
-    "うさプリズナーLv.4",
-    "うさプリ収監10回突破"
-  );
-  hasAchievement(
-    "achievement6_5",
-    "うさプリズナーLv.5",
-    "うさプリ収監30回突破"
-  );
-  hasAchievement(
-    "achievement7_1",
-    "うさぴょん中毒Lv.1",
-    "累計プレイ時間10秒突破"
-  );
-  hasAchievement(
-    "achievement7_2",
-    "うさぴょん中毒Lv.2",
-    "累計プレイ時間60秒突破"
-  );
-  hasAchievement(
-    "achievement7_3",
-    "うさぴょん中毒Lv.3",
-    "累計プレイ時間600秒突破"
-  );
-  hasAchievement(
-    "achievement7_4",
-    "うさぴょん中毒Lv.4",
-    "累計プレイ時間3600秒突破"
-  );
-  hasAchievement(
-    "achievement7_5",
-    "うさぴょん中毒Lv.5",
-    "累計プレイ時間43200秒突破"
-  );
-  hasAchievement("achievement8_1", "大漁Lv.1", "大漁1回突破");
-  hasAchievement("achievement8_2", "大漁Lv.2", "大漁5回突破");
-  hasAchievement("achievement8_3", "大漁Lv.3", "大漁10回突破");
-  hasAchievement("achievement8_4", "大漁Lv.4", "大漁50回突破");
-  hasAchievement("achievement8_5", "大漁Lv.5", "大漁100回突破");
-  hasAchievement("achievement9_1", "奇跡のあじゃ", "最初にあじゃを出した");
-  hasAchievement("achievement9_2", "幸運のくま", "最初にくまを出した");
-  hasAchievement("achievement9_3", "運命のトッテナム", "最初にりすを出した");
-  hasAchievement(
-    "achievement9_4",
-    "うさぴょんプレイヤーの鑑",
-    "うさぎのみで大漁を達成した"
-  );
-  hasAchievement(
-    "achievement10_1",
-    "Thank you for playing",
-    "エンディングを見た"
-  );
-  hasAchievement("achievement11_1", "うさぴょんマスターLv.1", "実績10個解除");
-  hasAchievement("achievement11_2", "うさぴょんマスターLv.2", "実績20個解除");
-  hasAchievement("achievement11_3", "うさぴょんマスターLv.3", "実績30個解除");
-  hasAchievement("achievement11_4", "うさぴょんマスターLv.4", "実績40個解除");
-  hasAchievement("achievement11_5", "Congratulations!", "全実績解除");
-
+    return false;
+  });
   // 実績解除
-  function setAchievement(
-    condition: boolean,
-    achievementNumber: string,
-    achievementDescription: string,
-    achievementTitle: string
-  ) {
-    if (condition && localStorage.getItem(achievementNumber) === null) {
-      infotext = `<span class="notice">${achievementDescription}🐰実績：${achievementTitle}解除</span><br>\n${infotext}`;
-      localStorage.setItem(achievementNumber, "1");
-      achshow();
-    }
-  }
-  setAchievement(
-    totalUsagi + usagi >= 100,
-    "achievement1_1",
-    "累計うさぎ数100匹突破",
-    "うさぴょんLv.1"
-  );
-  setAchievement(
-    totalUsagi + usagi >= 500,
-    "achievement1_2",
-    "累計うさぎ数500匹突破",
-    "うさぴょんLv.2"
-  );
-  setAchievement(
-    totalUsagi + usagi >= 1000,
-    "achievement1_3",
-    "累計うさぎ数1000匹突破",
-    "うさぴょんLv.3"
-  );
-  setAchievement(
-    totalUsagi + usagi >= 5000,
-    "achievement1_4",
-    "累計うさぎ数5000匹突破",
-    "うさぴょんLv.4"
-  );
-  setAchievement(
-    totalUsagi + usagi >= 10000,
-    "achievement1_5",
-    "累計うさぎ数10000匹突破",
-    "うさぴょんLv.5"
-  );
-  setAchievement(
-    totalKuma + kuma >= 1,
-    "achievement2_1",
-    "くま発見",
-    "くまぴょんLv.1"
-  );
-  setAchievement(
-    totalKuma + kuma >= 5,
-    "achievement2_2",
-    "累計くま発見数5匹突破",
-    "くまぴょんLv.2"
-  );
-  setAchievement(
-    totalKuma + kuma >= 10,
-    "achievement2_3",
-    "累計くま発見数10匹突破",
-    "くまぴょんLv.3"
-  );
-  setAchievement(
-    totalKuma + kuma >= 50,
-    "achievement2_4",
-    "累計くま発見数50匹突破",
-    "くまぴょんLv.4"
-  );
-  setAchievement(
-    totalKuma + kuma >= 100,
-    "achievement2_5",
-    "累計くま発見数100匹突破",
-    "くまぴょんLv.5"
-  );
-  setAchievement(
-    totalRisu + risu >= 1,
-    "achievement3_1",
-    "りす発見",
-    "トッテナムLv.1"
-  );
-  setAchievement(
-    totalRisu + risu >= 5,
-    "achievement3_2",
-    "累計りす発見数5匹突破",
-    "トッテナムLv.2"
-  );
-  setAchievement(
-    totalRisu + risu >= 10,
-    "achievement3_3",
-    "累計りす発見数10匹突破",
-    "トッテナムLv.3"
-  );
-  setAchievement(
-    totalRisu + risu >= 50,
-    "achievement3_4",
-    "累計りす発見数50匹突破",
-    "トッテナムLv.4"
-  );
-  setAchievement(
-    totalRisu + risu >= 100,
-    "achievement3_5",
-    "累計りす発見数100匹突破",
-    "トッテナムLv.5"
-  );
-  setAchievement(
-    totalAja + aja >= 1,
-    "achievement4_1",
-    "あじゃ発見",
-    "あじゃぴょんLv.1"
-  );
-  setAchievement(
-    totalAja + aja >= 3,
-    "achievement4_2",
-    "累計あじゃ発見数3匹突破",
-    "あじゃぴょんLv.2"
-  );
-  setAchievement(
-    totalAja + aja >= 5,
-    "achievement4_3",
-    "累計あじゃ発見数5匹突破",
-    "あじゃぴょんLv.3"
-  );
-  setAchievement(
-    totalAja + aja >= 10,
-    "achievement4_4",
-    "累計あじゃ発見数10匹突破",
-    "あじゃぴょんLv.4"
-  );
-  setAchievement(
-    totalAja + aja >= 30,
-    "achievement4_5",
-    "累計あじゃ発見数30匹突破",
-    "あじゃぴょんLv.5"
-  );
-  setAchievement(
-    localStorage.totalTori >= 1,
-    "achievement5_1",
-    "鳥になった回数1回突破",
-    "鳥貴族Lv.1"
-  );
-  setAchievement(
-    localStorage.totalTori >= 5,
-    "achievement5_2",
-    "鳥になった回数5回突破",
-    "鳥貴族Lv.2"
-  );
-  setAchievement(
-    localStorage.totalTori >= 10,
-    "achievement5_3",
-    "鳥になった回数10回突破",
-    "鳥貴族Lv.3"
-  );
-  setAchievement(
-    localStorage.totalTori >= 30,
-    "achievement5_4",
-    "鳥になった回数30回突破",
-    "鳥貴族Lv.4"
-  );
-  setAchievement(
-    localStorage.totalTori >= 50,
-    "achievement5_5",
-    "鳥になった回数50回突破",
-    "鳥貴族Lv.5"
-  );
-  setAchievement(
-    localStorage.usapriTimes >= 1,
-    "achievement6_1",
-    "うさプリ収監",
-    "うさプリズナーLv.1"
-  );
-  setAchievement(
-    localStorage.usapriTimes >= 3,
-    "achievement6_2",
-    "うさプリ収監3回突破",
-    "うさプリズナーLv.2"
-  );
-  setAchievement(
-    localStorage.usapriTimes >= 5,
-    "achievement6_3",
-    "うさプリ収監5回突破",
-    "うさプリズナーLv.3"
-  );
-  setAchievement(
-    localStorage.usapriTimes >= 10,
-    "achievement6_4",
-    "うさプリ収監10回突破",
-    "うさプリズナーLv.4"
-  );
-  setAchievement(
-    localStorage.usapriTimes >= 30,
-    "achievement6_5",
-    "うさプリ収監30回突破",
-    "うさプリズナーLv.5"
-  );
-  setAchievement(
-    playTime + nowTime - launchTime >= 10,
-    "achievement7_1",
-    "累計プレイ時間10秒突破",
-    "うさぴょん中毒Lv.1"
-  );
-  setAchievement(
-    playTime + nowTime - launchTime >= 60,
-    "achievement7_2",
-    "累計プレイ時間60秒突破",
-    "うさぴょん中毒Lv.2"
-  );
-  setAchievement(
-    playTime + nowTime - launchTime >= 600,
-    "achievement7_3",
-    "累計プレイ時間600秒突破",
-    "うさぴょん中毒Lv.3"
-  );
-  setAchievement(
-    playTime + nowTime - launchTime >= 3600,
-    "achievement7_4",
-    "累計プレイ時間3600秒突破",
-    "うさぴょん中毒Lv.4"
-  );
-  setAchievement(
-    playTime + nowTime - launchTime >= 43200,
-    "achievement7_5",
-    "累計プレイ時間43200秒突破",
-    "うさぴょん中毒Lv.5"
-  );
-  setAchievement(
-    totalTairyou + tairyou >= 1,
-    "achievement8_1",
-    "大漁1回突破",
-    "大漁Lv.1"
-  );
-  setAchievement(
-    totalTairyou + tairyou >= 5,
-    "achievement8_2",
-    "大漁5回突破",
-    "大漁Lv.2"
-  );
-  setAchievement(
-    totalTairyou + tairyou >= 10,
-    "achievement8_3",
-    "大漁10回突破",
-    "大漁Lv.3"
-  );
-  setAchievement(
-    totalTairyou + tairyou >= 50,
-    "achievement8_4",
-    "大漁50回突破",
-    "大漁Lv.4"
-  );
-  setAchievement(
-    totalTairyou + tairyou >= 100,
-    "achievement8_5",
-    "大漁100回突破",
-    "大漁Lv.5"
-  );
-  setAchievement(
-    usagi === 0 && kuma === 0 && risu === 0 && aja === 1,
-    "achievement9_1",
-    "最初にあじゃを出した",
-    "奇跡のあじゃ"
-  );
-  setAchievement(
-    usagi === 0 && risu === 0 && aja === 0 && kuma === 1,
-    "achievement9_2",
-    "最初にくまを出した",
-    "幸運のくま"
-  );
-  setAchievement(
-    usagi === 0 && kuma === 0 && aja === 0 && risu === 1,
-    "achievement9_3",
-    "最初にりすを出した",
-    "運命のトッテナム"
-  );
-  setAchievement(
-    usagi === 1000 &&
-      kuma === 0 &&
-      aja === 0 &&
-      risu === 0 &&
-      localStorage.usapri !== 1,
-    "achievement9_4",
-    "うさぎのみで1000匹を達成した",
-    "うさぴょんプレイヤーの鑑"
-  );
-  setAchievement(
-    usagi >= 10000,
-    "achievement10_1",
-    "エンディングを見た",
-    "Thank you for playing"
-  );
-  setAchievement(
-    totalAchievement >= 10,
-    "achievement11_1",
-    "実績10個解除",
-    "うさぴょんマスターLv.1"
-  );
-  setAchievement(
-    totalAchievement >= 20,
-    "achievement11_2",
-    "実績20個解除",
-    "うさぴょんマスターLv.2"
-  );
-  setAchievement(
-    totalAchievement >= 30,
-    "achievement11_3",
-    "実績30個解除",
-    "うさぴょんマスターLv.3"
-  );
-  setAchievement(
-    totalAchievement >= 40,
-    "achievement11_4",
-    "実績40個解除",
-    "うさぴょんマスターLv.4"
-  );
-  setAchievement(
-    totalAchievement >= 49,
-    "achievement11_5",
-    "全実績解除",
-    "Congratulations!"
-  );
   localStorage.setItem("totalAchievement", totalAchievement.toString());
   const achievementListElement = document.getElementById("achievement_list");
   if (achievementListElement !== null) {
@@ -860,7 +747,7 @@ function deleteData() {
     const del = window.confirm("全てのデータを初期化します。よろしいですか？");
     if (del) {
       localStorage.clear();
-      clearInterval(setInterval(achievement, 10));
+      clearInterval(setInterval(checkAchievement, 10));
       window.location.reload();
     }
   }
@@ -886,7 +773,7 @@ document.getElementById("del")?.addEventListener("click", deleteData);
 
 document.getElementById("1")?.addEventListener("click", usafuya);
 
-setInterval(achievement, 1000);
+setInterval(checkAchievement, 1000);
 
 setInterval(displayScore, 1000);
 
