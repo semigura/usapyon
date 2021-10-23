@@ -16,27 +16,16 @@ const current = {
   risu: 0,
   aja: 0,
   tori: 0,
+  tairyou: 0,
+  staffRoll: 0,
 };
-let tairyou = 0;
-let notCarmen = 0;
-let tairyouCount = 1;
-let staffRollCount = 1;
-let playTime: number;
-let infotext: string;
-const usaran = [
-  "image/usa (1).png",
-  "image/usa (2).png",
-  "image/usa (3).png",
-  "image/usa (4).png",
-  "image/usa (5).png",
-  "image/usa (6).png",
-  "image/usa (7).png",
-];
-let usasrc;
-// データ読み込み
-let launchTimes = Number(localStorage.getItem("launchTimes"));
-
 const launchTime = Math.floor(Date.now() / 1000);
+const version = document.getElementById("version");
+let infotext: string;
+let launchTimes = Number(localStorage.getItem("launchTimes"));
+let notCarmen = 0;
+let playTime: number;
+let redrawCount = 1;
 
 function fadeOutInfo() {
   $("#info").fadeOut("slow");
@@ -51,101 +40,47 @@ function showInfo() {
   setTimeout(fadeOutInfo, 5000);
 }
 
-/// /初回プレイの場合
-if (!localStorage.getItem("launchTimes")) {
-  localStorage.clear();
-  localStorage.setItem("launchTimes", "1");
-  localStorage.setItem("total.usagi", "0");
-  localStorage.setItem("total.kuma", "0");
-  localStorage.setItem("total.risu", "0");
-  localStorage.setItem("total.aja", "0");
-  localStorage.setItem("total.tori", "0");
-  total.usagi = 0;
-  total.kuma = 0;
-  total.risu = 0;
-  total.aja = 0;
-  total.tori = 0;
-  launchTimes = 1;
-  infotext = "初回プレイです";
-  document.addEventListener("DOMContentLoaded", showInfo);
-} else {
-  /// /二回目以降の場合
-  total.usagi = Number(localStorage.getItem("total.usagi"));
-  total.kuma = Number(localStorage.getItem("total.kuma"));
-  total.risu = Number(localStorage.getItem("total.risu"));
-  total.aja = Number(localStorage.getItem("total.aja"));
-  total.tori = Number(localStorage.getItem("total.tori"));
-  total.tairyou = Number(localStorage.getItem("total.tairyou"));
-  if (Number(localStorage.getItem("usapri")) !== 1) {
-    launchTimes += 1;
-    localStorage.setItem("launchTimes", launchTimes.toString());
-    infotext = `${launchTimes}回目のプレイです`;
-  } else {
-    infotext = "あなたはうさプリに入れられました";
-  }
-  infotext = `${infotext}<br>\n今まで累計${Number(
-    localStorage.getItem("total.usagi")
-  )}匹のうさぎを増やしました`;
-  if (total.kuma >= 1) {
-    infotext = `${infotext}<br>\n今まで累計${Number(
-      localStorage.getItem("total.kuma")
-    )}匹のくまを見つけました`;
-  }
-  if (total.risu >= 1) {
-    infotext = `${infotext}<br>\n今まで累計${Number(
-      localStorage.getItem("total.risu")
-    )}匹のりすを見つけました`;
-  }
-  if (total.aja >= 1) {
-    infotext = `${infotext}<br>\n今まで累計${Number(
-      localStorage.getItem("total.aja")
-    )}匹のあじゃを見つけました`;
-  }
-  document.addEventListener("DOMContentLoaded", showInfo);
-}
-if (localStorage.getItem("total.tairyou") === null) {
-  localStorage.setItem("total.tairyou", "0");
-  total.tairyou = Number(localStorage.getItem("total.tairyou"));
-}
-if (localStorage.getItem("usapriTimes") === null) {
-  localStorage.setItem("usapriTimes", "0");
-}
-if (localStorage.getItem("playTime") === null) {
-  localStorage.setItem("playTime", "0");
-  playTime = Number(localStorage.getItem("playTime"));
-} else {
-  playTime = Number(localStorage.getItem("playTime"));
-}
-
 function dataSave() {
-  localStorage.setItem(
-    "total.usagi",
-    (Number(localStorage.getItem("total.usagi")) + current.usagi).toString()
-  );
-  localStorage.setItem(
-    "total.kuma",
-    (Number(localStorage.getItem("total.kuma")) + current.kuma).toString()
-  );
-  localStorage.setItem(
-    "total.risu",
-    (Number(localStorage.getItem("total.risu")) + current.risu).toString()
-  );
-  localStorage.setItem(
-    "total.aja",
-    (Number(localStorage.getItem("total.aja")) + current.aja).toString()
-  );
-  localStorage.setItem(
-    "total.tairyou",
-    (Number(localStorage.getItem("total.tairyou")) + tairyou).toString()
-  );
-  localStorage.setItem(
-    "playTime",
-    (playTime + Math.floor(Date.now() / 1000) - launchTime).toString()
-  );
+  const saveItems = [
+    {
+      target: "total.usagi",
+      value: (
+        Number(localStorage.getItem("total.usagi")) + current.usagi
+      ).toString(),
+    },
+    {
+      target: "total.kuma",
+      value: (
+        Number(localStorage.getItem("total.kuma")) + current.kuma
+      ).toString(),
+    },
+    {
+      target: "total.risu",
+      value: (
+        Number(localStorage.getItem("total.risu")) + current.risu
+      ).toString(),
+    },
+    {
+      target: "total.aja",
+      value: (
+        Number(localStorage.getItem("total.aja")) + current.aja
+      ).toString(),
+    },
+    {
+      target: "total.tairyou",
+      value: (
+        Number(localStorage.getItem("total.tairyou")) + current.tairyou
+      ).toString(),
+    },
+    {
+      target: "playTime",
+      value: (playTime + Math.floor(Date.now() / 1000) - launchTime).toString(),
+    },
+  ];
+  saveItems.forEach((item) => {
+    localStorage.setItem(item.target, item.value);
+  });
 }
-
-// データ保存
-window.addEventListener("pagehide", dataSave);
 
 function displayScore() {
   const nowTime = Math.floor(Date.now() / 1000);
@@ -159,7 +94,7 @@ function displayScore() {
     (Math.round(((total.aja + current.aja) / launchTimes) * 10) / 10) * 2000;
   score += (total.tori + current.tori) * 10;
   score += Number(localStorage.getItem("usapriTimes")) * 1000;
-  score += (total.tairyou + tairyou) * 100;
+  score += (total.tairyou + current.tairyou) * 100;
   score =
     (score * (Number(localStorage.getItem("totalAchievement")) + 10)) / 10;
   score =
@@ -184,8 +119,8 @@ function displayScore() {
             )}回<br>\n`
           : ""
       }${
-        total.tairyou + tairyou >= 1
-          ? `累計大漁回数 : ${total.tairyou + tairyou}回<br>\n`
+        total.tairyou + current.tairyou >= 1
+          ? `累計大漁回数 : ${total.tairyou + current.tairyou}回<br>\n`
           : ""
       }1プレイでの平均うさぎ増やし数 : ${
         Math.round(((total.usagi + current.usagi) / launchTimes) * 10) / 10
@@ -200,18 +135,6 @@ function displayScore() {
         Math.round(((total.aja + current.aja) / launchTimes) * 10) / 10
       }匹<br>\nスコア : ${score}点<br>\n`;
   }
-}
-
-// BGM流す
-sound.soundis5.volume = 0.5;
-sound.soundis8.volume = 0.5;
-sound.soundis1.loop = true;
-sound.soundis5.loop = true;
-sound.soundis8.loop = true;
-if (localStorage.getItem("usapri") === "1") {
-  sound.soundis8.play();
-} else {
-  sound.soundis5.play();
 }
 
 function setNotCarmen() {
@@ -245,35 +168,12 @@ function playHi() {
   }
 }
 
-const version = document.getElementById("version");
-if (version !== null) {
-  version.innerHTML = "ver.1.1.1β";
-}
-
 function showCredit() {
   $("#credit").fadeToggle();
 }
 
 function returnFalse() {
   return false;
-}
-
-window.addEventListener("keydown", returnFalse);
-
-// 初期化
-if (localStorage.getItem("usapri") === "1") {
-  window.location.href = "usapri.html";
-}
-
-if (localStorage.getItem("mute") === "1") {
-  sound.soundis1.volume = 0;
-  sound.soundis2.volume = 0;
-  sound.soundis3.volume = 0;
-  sound.soundis4.volume = 0;
-  sound.soundis5.volume = 0;
-  sound.soundis6.volume = 0;
-  sound.soundis7.volume = 0;
-  sound.soundis8.volume = 0;
 }
 
 function clickTori() {
@@ -307,6 +207,16 @@ function usafuya() {
   const sH = Math.floor(Math.random() * window.innerHeight + 100) - 50;
   const random20 = Math.floor(Math.random() * 21);
   const random100 = Math.floor(Math.random() * 101);
+  let usasrc;
+  const usaran = [
+    "image/usa (1).png",
+    "image/usa (2).png",
+    "image/usa (3).png",
+    "image/usa (4).png",
+    "image/usa (5).png",
+    "image/usa (6).png",
+    "image/usa (7).png",
+  ];
   switch (random100) {
     case 0:
       usasrc = "image/risu.png";
@@ -340,9 +250,6 @@ function usafuya() {
   createImg.setAttribute("style", `position:fixed; top:${sH}px; left:${sW}px;`);
   document.body.appendChild(createImg);
 }
-// 0.1秒毎に状態チェック
-
-let redrawCount = 1;
 
 function redrawButton() {
   const initialButton = document.getElementById("1");
@@ -378,13 +285,12 @@ function showStatus() {
   if (current.aja >= 1) {
     u = `${u}<br>\n${current.aja}匹のあじゃがいます`;
   }
-
   const usa = document.getElementById("usa");
   if (usa !== null) {
     usa.innerHTML = u;
   }
   // うさぎが10000匹を超えた場合ジュピターを流してスタッフロールを表示
-  if (current.usagi >= 10000 * staffRollCount) {
+  if (current.usagi >= 10000 * (current.staffRoll + 1)) {
     play(sound.soundis3);
     const creimg = document.createElement("img");
     creimg.setAttribute("src", "image/staff.png");
@@ -400,10 +306,10 @@ function showStatus() {
       },
       400
     );
-    staffRollCount += 1;
-    tairyouCount += 1;
+    current.staffRoll += 1;
+    current.tairyou += 1;
     // うさぎが1000匹を超える毎に大漁を表示しカルメン組曲を再生
-  } else if (current.usagi >= 2 * tairyouCount) {
+  } else if (current.usagi >= 2 * (current.tairyou + 1)) {
     if (notCarmen !== 1) {
       play(sound.soundis1);
     }
@@ -411,8 +317,7 @@ function showStatus() {
     creimg.setAttribute("src", "image/tairyou.png");
     creimg.setAttribute("style", "position:fixed; bottom:10px; right:10px;");
     document.body.appendChild(creimg);
-    tairyouCount += 1;
-    tairyou += 1;
+    current.tairyou += 1;
   }
   redrawButton();
 }
@@ -634,31 +539,31 @@ function checkAchievement() {
       title: "うさぴょん中毒Lv.5",
     },
     {
-      condition: total.tairyou + tairyou >= 1,
+      condition: total.tairyou + current.tairyou >= 1,
       number: "achievement8_1",
       description: "大漁1回突破",
       title: "大漁Lv.1",
     },
     {
-      condition: total.tairyou + tairyou >= 5,
+      condition: total.tairyou + current.tairyou >= 5,
       number: "achievement8_2",
       description: "大漁5回突破",
       title: "大漁Lv.2",
     },
     {
-      condition: total.tairyou + tairyou >= 10,
+      condition: total.tairyou + current.tairyou >= 10,
       number: "achievement8_3",
       description: "大漁10回突破",
       title: "大漁Lv.3",
     },
     {
-      condition: total.tairyou + tairyou >= 50,
+      condition: total.tairyou + current.tairyou >= 50,
       number: "achievement8_4",
       description: "大漁50回突破",
       title: "大漁Lv.4",
     },
     {
-      condition: total.tairyou + tairyou >= 100,
+      condition: total.tairyou + current.tairyou >= 100,
       number: "achievement8_5",
       description: "大漁100回突破",
       title: "大漁Lv.5",
@@ -747,14 +652,9 @@ function checkAchievement() {
         return false;
       }
       infotext = `<span class="notice">${achievement.description}🐰実績：${achievement.title}解除</span><br>\n${infotext}`;
+      showInfo();
       localStorage.setItem(achievement.number, "1");
-      const info = document.getElementById("info");
-      if (info !== null) {
-        info.innerHTML = infotext;
-      }
-      $("#info").show();
       sound.soundis4.play();
-      setTimeout(fadeOutInfo, 5000);
     } else {
       achievementList += `<span class="notice">${achievement.title}</span> - ${achievement.description}<br>\n`;
       totalAchievement += 1;
@@ -782,28 +682,119 @@ function deleteData() {
   }
 }
 
-document.getElementById("mute_se")?.addEventListener("click", muteSE);
+function initialSettings() {
+  // BGM流す
+  sound.soundis5.volume = 0.5;
+  sound.soundis8.volume = 0.5;
+  sound.soundis1.loop = true;
+  sound.soundis5.loop = true;
+  sound.soundis8.loop = true;
+  if (localStorage.getItem("usapri") === "1") {
+    sound.soundis8.play();
+  } else {
+    sound.soundis5.play();
+  }
 
-document.getElementById("mute_bgm")?.addEventListener("click", muteBGM);
+  if (version !== null) {
+    version.innerHTML = "ver.1.1.1β";
+  }
 
-document.getElementById("not_carmen")?.addEventListener("click", setNotCarmen);
+  // 初期化
+  if (localStorage.getItem("usapri") === "1") {
+    window.location.href = "usapri.html";
+  }
 
-document.getElementById("play_ko")?.addEventListener("click", playKo);
+  if (localStorage.getItem("mute") === "1") {
+    sound.soundis1.volume = 0;
+    sound.soundis2.volume = 0;
+    sound.soundis3.volume = 0;
+    sound.soundis4.volume = 0;
+    sound.soundis5.volume = 0;
+    sound.soundis6.volume = 0;
+    sound.soundis7.volume = 0;
+    sound.soundis8.volume = 0;
+  }
 
-document.getElementById("play_ca")?.addEventListener("click", playCa);
+  // 初回プレイの場合
+  if (!localStorage.getItem("launchTimes")) {
+    localStorage.clear();
+    localStorage.setItem("launchTimes", "1");
+    localStorage.setItem("total.usagi", "0");
+    localStorage.setItem("total.kuma", "0");
+    localStorage.setItem("total.risu", "0");
+    localStorage.setItem("total.aja", "0");
+    localStorage.setItem("total.tori", "0");
+    total.usagi = 0;
+    total.kuma = 0;
+    total.risu = 0;
+    total.aja = 0;
+    total.tori = 0;
+    launchTimes = 1;
+    infotext = "初回プレイです";
+    document.addEventListener("DOMContentLoaded", showInfo);
+  } else {
+    /// /二回目以降の場合
+    total.usagi = Number(localStorage.getItem("total.usagi"));
+    total.kuma = Number(localStorage.getItem("total.kuma"));
+    total.risu = Number(localStorage.getItem("total.risu"));
+    total.aja = Number(localStorage.getItem("total.aja"));
+    total.tori = Number(localStorage.getItem("total.tori"));
+    total.tairyou = Number(localStorage.getItem("total.tairyou"));
+    if (Number(localStorage.getItem("usapri")) !== 1) {
+      launchTimes += 1;
+      localStorage.setItem("launchTimes", launchTimes.toString());
+      infotext = `${launchTimes}回目のプレイです`;
+    } else {
+      infotext = "あなたはうさプリに入れられました";
+    }
+    infotext = `${infotext}<br>\n今まで累計${Number(
+      localStorage.getItem("total.usagi")
+    )}匹のうさぎを増やしました`;
+    if (total.kuma >= 1) {
+      infotext = `${infotext}<br>\n今まで累計${Number(
+        localStorage.getItem("total.kuma")
+      )}匹のくまを見つけました`;
+    }
+    if (total.risu >= 1) {
+      infotext = `${infotext}<br>\n今まで累計${Number(
+        localStorage.getItem("total.risu")
+      )}匹のりすを見つけました`;
+    }
+    if (total.aja >= 1) {
+      infotext = `${infotext}<br>\n今まで累計${Number(
+        localStorage.getItem("total.aja")
+      )}匹のあじゃを見つけました`;
+    }
+    showInfo();
+  }
+  if (localStorage.getItem("total.tairyou") === null) {
+    localStorage.setItem("total.tairyou", "0");
+    total.tairyou = Number(localStorage.getItem("total.tairyou"));
+  }
+  if (localStorage.getItem("usapriTimes") === null) {
+    localStorage.setItem("usapriTimes", "0");
+  }
+  if (localStorage.getItem("playTime") === null) {
+    localStorage.setItem("playTime", "0");
+    playTime = Number(localStorage.getItem("playTime"));
+  } else {
+    playTime = Number(localStorage.getItem("playTime"));
+  }
+}
 
-document.getElementById("play_hi")?.addEventListener("click", playHi);
-
-document.getElementById("version")?.addEventListener("click", showCredit);
-
-document.getElementById("tori")?.addEventListener("click", clickTori);
-
-document.getElementById("del")?.addEventListener("click", deleteData);
-
+window.addEventListener("DOMContentLoaded", initialSettings);
+window.addEventListener("keydown", returnFalse);
+window.addEventListener("pagehide", dataSave);
 document.getElementById("1")?.addEventListener("click", usafuya);
-
+document.getElementById("del")?.addEventListener("click", deleteData);
+document.getElementById("mute_bgm")?.addEventListener("click", muteBGM);
+document.getElementById("mute_se")?.addEventListener("click", muteSE);
+document.getElementById("not_carmen")?.addEventListener("click", setNotCarmen);
+document.getElementById("play_ca")?.addEventListener("click", playCa);
+document.getElementById("play_hi")?.addEventListener("click", playHi);
+document.getElementById("play_ko")?.addEventListener("click", playKo);
+document.getElementById("tori")?.addEventListener("click", clickTori);
+document.getElementById("version")?.addEventListener("click", showCredit);
 setInterval(checkAchievement, 1000);
-
 setInterval(displayScore, 1000);
-
 setInterval(showStatus, 100);
