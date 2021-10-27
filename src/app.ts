@@ -192,8 +192,6 @@ function usafuya() {
   sound.soundis2.play();
   const sW = Math.floor(Math.random() * window.innerWidth + 60) - 30;
   const sH = Math.floor(Math.random() * window.innerHeight + 100) - 50;
-  const random20 = Math.floor(Math.random() * 21);
-  const random100 = Math.floor(Math.random() * 101);
   let usasrc;
   const usaran = [
     "image/usa (1).png",
@@ -204,33 +202,54 @@ function usafuya() {
     "image/usa (6).png",
     "image/usa (7).png",
   ];
-  switch (random100) {
-    case 0:
-      usasrc = "image/risu.png";
-      current.risu += 1;
-      break;
-    case 1:
-      usasrc = "image/kuma.png";
-      current.kuma += 1;
-      break;
-    case 2:
-      switch (random20) {
-        case 0:
-          sound.soundis6.currentTime = 0;
-          sound.soundis6.play();
-          usasrc = "image/aja.png";
-          current.aja += 1;
-          break;
-        default:
-          usasrc = usaran[Math.floor(Math.random() * usaran.length)];
-          current.usagi += 1;
-          break;
-      }
-      break;
-    default:
-      usasrc = usaran[Math.floor(Math.random() * usaran.length)];
-      current.usagi += 1;
-      break;
+  if (current.usapri) {
+    const random2001 = Math.floor(Math.random() * 2001);
+    switch (random2001) {
+      case 0:
+        sound.soundis6.currentTime = 0;
+        sound.soundis6.play();
+        usasrc = "image/aja.png";
+        current.aja += 1;
+        localStorage.setItem("usapri", "0");
+        alert("あじゃが助け出してくれました");
+        window.location.href = "index.html";
+        break;
+      default:
+        usasrc = usaran[Math.floor(Math.random() * usaran.length)];
+        current.usagi += 1;
+        break;
+    }
+  } else {
+    const random20 = Math.floor(Math.random() * 21);
+    const random100 = Math.floor(Math.random() * 101);
+    switch (random100) {
+      case 0:
+        usasrc = "image/risu.png";
+        current.risu += 1;
+        break;
+      case 1:
+        usasrc = "image/kuma.png";
+        current.kuma += 1;
+        break;
+      case 2:
+        switch (random20) {
+          case 0:
+            sound.soundis6.currentTime = 0;
+            sound.soundis6.play();
+            usasrc = "image/aja.png";
+            current.aja += 1;
+            break;
+          default:
+            usasrc = usaran[Math.floor(Math.random() * usaran.length)];
+            current.usagi += 1;
+            break;
+        }
+        break;
+      default:
+        usasrc = usaran[Math.floor(Math.random() * usaran.length)];
+        current.usagi += 1;
+        break;
+    }
   }
   const createImg = document.createElement("img");
   createImg.setAttribute("src", usasrc);
@@ -779,3 +798,52 @@ document.getElementById("version")?.addEventListener("click", showCredit);
 setInterval(checkAchievement, 1000);
 setInterval(displayScore, 1000);
 setInterval(showStatus, 100);
+
+if (!current.usapri && window.location.href === "usapri.html") {
+  alert("入ってはいけません");
+  window.location.href = "index.html";
+}
+
+function usapriBreak() {
+  localStorage.setItem("usapri", "0");
+
+  alert("釈放します。\nもう戻ってきちゃダメですよ");
+  window.location.href = "index.html";
+}
+function setButtonSize() {
+  const buttonSize =
+    405 - (Number(localStorage.getItem("usapriTimes")) + 1) * 5;
+  $("#1").css({
+    "font-size": `${buttonSize}%`,
+  });
+}
+
+function cantMuteBGM() {
+  sound.soundis7.play();
+  alert("消えません");
+}
+
+function checkStatus() {
+  let u = `${current.usagi}匹のうさぎがいます`;
+  if (current.kuma >= 1) {
+    u = `${u}<br>\n${current.kuma}匹のくまがいます`;
+  }
+  if (current.risu >= 1) {
+    u = `${u}<br>\n${current.risu}匹のりすがいます`;
+  }
+  $("#usa").html(u);
+  if (current.usagi >= 1000) {
+    usapriBreak();
+  }
+}
+
+if (current.usapri) {
+  // 初期化
+  sound.soundis2.defaultPlaybackRate = 0.3;
+  setButtonSize();
+
+  $("#mute").click(cantMuteBGM);
+
+  // 0.1秒毎に状態チェック
+  setInterval(checkStatus, 100);
+}
