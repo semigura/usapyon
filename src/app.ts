@@ -813,9 +813,10 @@ function usapriBreak() {
 function setButtonSize() {
   const buttonSize =
     405 - (Number(localStorage.getItem("usapriTimes")) + 1) * 5;
-  $("#1").css({
-    "font-size": `${buttonSize}%`,
-  });
+  const button = document.getElementById("1");
+  if (button) {
+    button.style.fontSize = `${buttonSize}%`;
+  }
 }
 
 function cantMuteBGM() {
@@ -831,7 +832,10 @@ function checkStatus() {
   if (current.risu >= 1) {
     u = `${u}<br>\n${current.risu}匹のりすがいます`;
   }
-  $("#usa").html(u);
+  const usa = document.getElementById("usa");
+  if (usa) {
+    usa.innerHTML = u;
+  }
   if (current.usagi >= 1000) {
     usapriBreak();
   }
@@ -842,7 +846,8 @@ if (current.usapri) {
   sound.soundis2.defaultPlaybackRate = 0.3;
   setButtonSize();
 
-  $("#mute").click(cantMuteBGM);
+  const mute = document.getElementById("mute");
+  mute?.addEventListener("click", cantMuteBGM);
 
   // 0.1秒毎に状態チェック
   setInterval(checkStatus, 100);
